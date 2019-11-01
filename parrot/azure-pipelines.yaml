@@ -1,0 +1,33 @@
+name: 0.1.$(Rev:r)
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - parrot
+  branches:
+    include:
+      - master
+
+variables:
+  buildConfiguration: 'Release'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run Unit Tests'
+            inputs:
+              command: 'test'
+              projects: 'parrot/tests/parrot.UnitTests/parrot.UnitTests.csproj'
+              arguments: '-c $(BuildConfiguration) -l:trx'
+              testRunTitle: 'Unit Tests'
