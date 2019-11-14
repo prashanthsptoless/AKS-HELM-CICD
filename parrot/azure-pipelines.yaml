@@ -29,5 +29,17 @@ stages:
             inputs:
               command: 'test'
               projects: 'parrot/tests/parrot.UnitTests/parrot.UnitTests.csproj'
-              arguments: '-c $(BuildConfiguration) -l:trx'
+              arguments: '--configuration $(BuildConfiguration) --logger:trx'
               testRunTitle: 'Unit Tests'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish Application'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: 'parrot/src/parrot/parrot.csproj'
+              arguments: '--configuration $(BuildConfiguration) --output dist'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+        
