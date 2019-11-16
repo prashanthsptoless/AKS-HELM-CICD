@@ -5,3 +5,10 @@ resource "azurerm_container_registry" "basic" {
   sku                 = "Basic"
 }
 
+resource "azurerm_role_assignment" "k8s_acrpull" {
+  count = length(local.cluster_ids)
+
+  principal_id         = local.cluster_ids[count.index]
+  role_definition_name = "AcrPull"
+  scope                = azurerm_container_registry.basic.id
+}

@@ -1,5 +1,5 @@
 resource "azuread_application" "aks" {
-  name = "container-pipelines-demo-app"
+  name = "${local.environment}-aks-app"
 }
 
 resource "azuread_service_principal" "aks" {
@@ -12,13 +12,7 @@ resource "azuread_service_principal" "aks" {
 resource "azuread_application_password" "credential" {
   application_object_id = azuread_application.aks.id
   value                 = random_uuid.password.result
-  end_date_relative     = "24h"
-}
-
-resource "azurerm_role_assignment" "k8s_acrpull" {
-  principal_id         = azuread_service_principal.aks.object_id
-  scope                = azurerm_container_registry.basic.id
-  role_definition_name = "AcrPull"
+  end_date_relative     = "48h"
 }
 
 resource "random_uuid" "password" {}
