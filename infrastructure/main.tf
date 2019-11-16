@@ -1,5 +1,6 @@
 locals {
-  resource_location = "westus2"
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
+  resource_location          = "westus2"
 
   cluster_ids = [
     module.aks_dev.object_id,

@@ -1,7 +1,8 @@
 resource "helm_release" "ingress" {
-  name    = "nginx-ingress"
-  chart   = "stable/nginx-ingress"
-  keyring = ""
+  chart     = "stable/nginx-ingress"
+  keyring   = ""
+  name      = "nginx-ingress"
+  namespace = "apps"
 
   set {
     name  = "rbac.create"

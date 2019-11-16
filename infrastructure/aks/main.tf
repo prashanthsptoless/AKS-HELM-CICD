@@ -1,8 +1,8 @@
 locals {
-  environment       = var.environment
-  kube_config       = azurerm_kubernetes_cluster.main.kube_config.0
-  resource_group    = var.resource_group
-  resource_location = var.resource_location
+  environment             = var.environment
+  kube_config             = azurerm_kubernetes_cluster.main.kube_config.0
+  log_analytics_workspace = var.log_analytics_workspace
+  resource_group          = var.resource_group
 }
 
 provider "kubernetes" {
