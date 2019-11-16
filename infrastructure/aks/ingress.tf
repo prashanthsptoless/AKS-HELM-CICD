@@ -1,4 +1,6 @@
 resource "helm_release" "ingress" {
+  depends_on = [kubernetes_service_account.tiller]
+
   chart     = "stable/nginx-ingress"
   keyring   = ""
   name      = "nginx-ingress"

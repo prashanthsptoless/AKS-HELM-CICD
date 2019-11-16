@@ -12,7 +12,7 @@ metadata:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
-  - host: {{ .Release.Name }}.{{ .Values.ingress.basedomain }}
+  - host:
     http:
       paths:
       - path: /
