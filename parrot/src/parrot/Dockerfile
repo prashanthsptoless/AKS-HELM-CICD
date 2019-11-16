@@ -1,16 +1,8 @@
-FROM microsoft/aspnetcore-build:2.0 AS build-env
+FROM microsoft/dotnet:2.2-aspnetcore-runtime-alpine
+
+RUN apk update && apk upgrade --no-cache
+
 WORKDIR /app
+COPY ./dist .
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Build runtime image
-FROM microsoft/aspnetcore:2.0
-WORKDIR /app
-COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "parrot.dll"]
