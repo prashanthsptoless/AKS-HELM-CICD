@@ -10,5 +10,5 @@ resource "azurerm_role_assignment" "k8s_acrpull" {
 
   principal_id         = local.cluster_ids[count.index]
   role_definition_name = "AcrPull"
-  scope                = azurerm_container_registry.basic.id
+  scope                = azurerm_resource_group.main.id
 }

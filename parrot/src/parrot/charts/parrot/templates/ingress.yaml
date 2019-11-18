@@ -8,11 +8,11 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-  annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+  annotations: 
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host:
+  - host: {{ .Values.ingress.basedomain }}
     http:
       paths:
       - path: /

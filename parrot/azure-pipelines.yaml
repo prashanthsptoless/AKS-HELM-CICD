@@ -10,8 +10,10 @@ trigger:
       - master
 
 variables:
-  aksHostDev: dev-container-demo.westus2.aksapp.io
-  aksHostProd: prod-container-demo.westus2.aksapp.io
+  helmVersion: 2.15.2
+  aksHost: westus2.cloudapp.azure.com
+  aksHostDev: dev-container-demo.$(aksHost)
+  aksHostProd: prod-container-demo.$(aksHost)
   buildConfiguration: 'Release'
   containerRepository: parrot
   containerRegistry: containerpipelinesdemoacr
@@ -96,7 +98,7 @@ stages:
           - task: HelmInstaller@1
             displayName: 'Initialize Helm'
             inputs:
-              helmVersionToInstall: '2.14.3'
+              helmVersionToInstall: '$(helmVersion)'
 
           - task: HelmDeploy@0
             displayName: 'Package Helm Chart'
@@ -124,7 +126,7 @@ stages:
         displayName: Deploy to Dev Environment
         pool:
           vmImage: 'ubuntu-latest'
-        environment: dev
+        environment: dev.apps
         strategy:
           runOnce:
             deploy:
@@ -134,7 +136,7 @@ stages:
                 - task: HelmInstaller@1
                   displayName: 'Install Helm'
                   inputs:
-                    helmVersionToInstall: '2.14.3'
+                    helmVersionToInstall: '$(helmVersion)'
 
                 - task: HelmDeploy@0
                   displayName: 'Initialize Helm'
@@ -179,7 +181,7 @@ stages:
         displayName: Deploy to Prod Environment
         pool:
           vmImage: 'ubuntu-latest'
-        environment: prod
+        environment: prod.apps
         strategy:
           runOnce:
             deploy:
@@ -189,7 +191,7 @@ stages:
                 - task: HelmInstaller@1
                   displayName: 'Install Helm'
                   inputs:
-                    helmVersionToInstall: '2.14.3'
+                    helmVersionToInstall: '$(helmVersion)'
 
                 - task: HelmDeploy@0
                   displayName: 'Initialize Helm'
