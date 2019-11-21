@@ -1,0 +1,53 @@
+name: 0.1.$(Rev:r)
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - parrot/src/parrot/charts
+      - parrot/azure-pipelines.helm.yaml
+  branches:
+    include:
+      - master
+
+variables:
+  helmVersion: 2.15.2
+  containerRepository: parrot
+  containerRegistry: containerpipelinesdemoacr
+
+stages:
+  - stage: Build
+    displayName: 'Build Helm Chart'
+    jobs:
+      - job: Helm
+        displayName: 'Build and Push Helm Chart'
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: HelmInstaller@1
+            displayName: 'Initialize Helm'
+            inputs:
+              helmVersionToInstall: '$(helmVersion)'
+
+          - task: HelmDeploy@0
+            displayName: 'Package Helm Chart'
+            inputs:
+              command: 'package'
+              chartPath: 'parrot/src/parrot/charts/parrot'
+              chartVersion: '$(Build.BuildNumber)'
+              save: false
+
+          - task: AzureCLI@2
+            displayName: 'Push Helm Chart'
+            inputs:
+              azureSubscription: 'AzureMSDN'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az acr helm push \
+                  --name $(containerRegistry) \
+                  $(Build.ArtifactStagingDirectory)/$(containerRepository)-$(Build.BuildNumber).tgz

@@ -1,0 +1,141 @@
+name: 0.1.$(Rev:r)
+
+resources:
+  pipelines:
+    - pipeline: build_docker
+      source: 'docker-image'
+      trigger: true
+      branch: master
+    - pipeline: build_helm
+      trigger: true
+      branch: master
+      source: 'helm-chart'
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - parrot/azure-pipelines.deploy.yaml
+  branches:
+    include:
+      - master
+
+variables:
+  helmVersion: 2.15.2
+  aksHost: westus2.cloudapp.azure.com
+  aksHostDev: dev-container-demo.$(aksHost)
+  aksHostProd: prod-container-demo.$(aksHost)
+  containerRepository: parrot
+  containerRegistry: containerpipelinesdemoacr
+  imageTag: $(resources.pipeline.build_docker.runName)
+
+stages:
+  - stage:
+    displayName: Deploy to DEV
+    jobs:
+      - deployment: Dev
+        displayName: Deploy to Dev Environment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: dev.apps
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: '$(helmVersion)'
+
+                - task: HelmDeploy@0
+                  displayName: 'Initialize Helm'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'dev-container-demo'
+                    useClusterAdmin: true
+                    command: 'init'
+                    arguments: '--service-account tiller --force-upgrade'
+
+                - task: AzureCLI@2
+                  displayName: 'Add ACR to Helm Repository list'
+                  inputs:
+                    azureSubscription: 'AzureMSDN'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
+                    failOnStandardError: true
+
+                - task: HelmDeploy@0
+                  displayName: 'Helm Deploy'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'dev-container-demo'
+                    useClusterAdmin: true
+                    namespace: 'apps'
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: '$(containerRegistry)/$(containerRepository)'
+                    releaseName: '$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+                    force: true
+
+  - stage:
+    displayName: Deploy to PROD
+    jobs:
+      - deployment: Prod
+        displayName: Deploy to Prod Environment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: prod.apps
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: '$(helmVersion)'
+
+                - task: HelmDeploy@0
+                  displayName: 'Initialize Helm'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'prod-container-demo'
+                    useClusterAdmin: true
+                    command: 'init'
+                    arguments: '--service-account tiller --force-upgrade'
+
+                - task: AzureCLI@2
+                  displayName: 'Add ACR to Helm Repository list'
+                  inputs:
+                    azureSubscription: 'AzureMSDN'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
+                    failOnStandardError: true
+
+                - task: HelmDeploy@0
+                  displayName: 'Helm Deploy'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'prod-container-demo'
+                    useClusterAdmin: true
+                    namespace: 'apps'
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: '$(containerRegistry)/$(containerRepository)'
+                    releaseName: '$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(Build.BuildNumber),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+                    force: true

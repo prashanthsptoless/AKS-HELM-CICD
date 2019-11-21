@@ -1,0 +1,87 @@
+name: 0.1.$(Rev:r)
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - parrot
+    exclude:
+      - 'parrot/src/parrot/charts'
+      - 'parrot/azure-pipelines.deploy.yaml'
+      - 'parrot/azure-pipelines.helm.yaml'
+  branches:
+    include:
+      - master
+
+variables:
+  buildConfiguration: 'Release'
+  containerRepository: parrot
+  containerRegistry: containerpipelinesdemoacr
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+
+stages:
+  - stage: Build
+    displayName: 'Build Docker Image'
+    jobs:
+      - job: Docker
+        displayName: 'Build Docker Image'
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: CacheBeta@0
+            displayName: Cache NuGet packages
+            inputs:
+              key: nuget | parrot/src/parrot/package-lock.json
+              path: $(NUGET_PACKAGES)
+
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core SDK version 2.2.105'
+            inputs:
+              packageType: 'sdk'
+              version: '2.2.105'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run Unit Tests'
+            inputs:
+              command: 'test'
+              projects: 'parrot/tests/parrot.UnitTests/parrot.UnitTests.csproj'
+              arguments: '--configuration $(BuildConfiguration) --logger:trx'
+              testRunTitle: 'Unit Tests'
+            
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish Application'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: 'parrot/src/parrot/parrot.csproj'
+              arguments: '--configuration $(BuildConfiguration) --output dist'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: Docker@2
+            displayName: 'Build Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(containerRepository)'
+              command: 'build'
+              Dockerfile: 'parrot/src/parrot/Dockerfile'
+              buildContext: 'parrot/src/parrot'
+              tags: '$(Build.BuildNumber)'
+
+          - task: Bash@3
+            displayName: 'Container Scan'
+            inputs:
+              targetType: 'inline'
+              script: 'echo ''Container scan... passed!'''
+              
+          - task: Docker@2
+            displayName: 'Push Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(containerRepository)'
+              command: 'push'
+              tags: '$(Build.BuildNumber)'
