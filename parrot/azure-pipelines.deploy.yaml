@@ -137,5 +137,5 @@ stages:
                     chartType: 'Name'
                     chartName: '$(containerRegistry)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(Build.BuildNumber),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
                     force: true

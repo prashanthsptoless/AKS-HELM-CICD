@@ -1,40 +1,184 @@
-pool:
-  vmImage: 'Ubuntu 16.04'
+name: 0.1.$(Rev:r)
 
 trigger:
   batch: true
-  branches:
-    include: 
-    - refs/heads/*
   paths:
-    include: 
-    - captainkube/
+    include:
+      - captainkube
+  branches:
+    include:
+      - master
 
+    
 variables:
   projectName: captainkube
   registryServerName: '$(registryName).azurecr.io'
   imageName: '$(projectName)'
-  # define 3 more variables: registryName, registryLogin and registryPassword in the build pipeline in UI
+  registryName: containerpipelinesdemoacr
+  helmVersion: '2.15.2'
 
+stages:
+  - stage: Build
+    displayName: 'Build and Deploy Image and Chart'
+    jobs:
+      - job: Build
 
-steps:
-- bash: docker build -f $(system.defaultWorkingDirectory)/$(projectName)/Dockerfile -t $(registryServerName)/$(imageName):$(build.buildId) $(system.defaultWorkingDirectory)/$(projectName)
-  displayName: 'docker build'
+        pool:
+          vmImage: 'ubuntu-latest'
 
-- bash: |
-    docker login $(registryServerName) -u $(registryLogin) -p $(registryPassword)
-    docker push $(registryServerName)/$(imageName):$(build.buildId)
-  displayName: 'docker push'
-  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+        steps:
+          - checkout: self
+            fetchDepth: 1
 
-- task: HelmInstaller@0
-  displayName: 'Install Helm'
-  inputs:
-    helmVersion: 2.14.1
+          - task: Docker@2
+            displayName: 'Build Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(imageName)'
+              command: 'build'
+              Dockerfile: 'captainkube/Dockerfile'
+              buildContext: 'captainkube'
+              tags: '$(Build.BuildNumber)'
 
-- bash: helm package --version $(build.buildId) --destination $(build.artifactStagingDirectory) $(system.defaultWorkingDirectory)/$(projectName)/charts/$(projectName)
-  displayName: 'helm package'
+             
+          - task: Docker@2
+            displayName: 'Push Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(imageName)'
+              command: 'push'
+              tags: '$(Build.BuildNumber)'
 
-- bash: az acr helm push -n $(registryName) -u $(registryLogin) -p $(registryPassword) $(build.artifactStagingDirectory)/$(projectName)-$(build.buildId).tgz
-  displayName: 'az acr helm push'
-  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+          - task: HelmInstaller@1
+            displayName: 'Install Helm'
+            inputs:
+              helmVersionToInstall: '$(helmVersion)'
+
+          - task: HelmDeploy@0
+            displayName: 'Package Helm Chart'
+            inputs:
+              command: 'package'
+              chartPath: 'captainkube/charts/captainkube'
+              chartVersion: '$(Build.BuildNumber)'
+              save: false
+
+          - task: AzureCLI@2
+            displayName: 'Push Helm Chart'
+            inputs:
+              azureSubscription: 'AzureMSDN'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az acr helm push \
+                  --name $(registryName) \
+                  $(Build.ArtifactStagingDirectory)/$(imageName)-$(Build.BuildNumber).tgz
+
+  - stage:
+    displayName: Deploy to DEV
+    jobs:
+      - deployment: Dev
+        displayName: Deploy to Dev Environment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: dev.apps
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: '$(helmVersion)'
+
+                - task: HelmDeploy@0
+                  displayName: 'Initialize Helm'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'dev-container-demo'
+                    useClusterAdmin: true
+                    command: 'init'
+                    arguments: '--service-account tiller --force-upgrade'
+
+                - task: AzureCLI@2
+                  displayName: 'Add ACR to Helm Repository list'
+                  inputs:
+                    azureSubscription: 'AzureMSDN'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az acr helm repo add --name $(registryName)'
+                    failOnStandardError: true
+
+                - task: HelmDeploy@0
+                  displayName: 'Helm Deploy'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'dev-container-demo'
+                    useClusterAdmin: true
+                    namespace: 'apps'
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: '$(registryName)/$(imageName)'
+                    releaseName: '$(imageName)'
+                    overrideValues: 'image.tag=$(Build.BuildNumber),image.repository=$(registryName).azurecr.io/$(imageName)'
+                    force: true
+
+  - stage:
+    displayName: Deploy to PROD
+    jobs:
+      - deployment: Prod
+        displayName: Deploy to Prod Environment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: prod.apps
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: '$(helmVersion)'
+
+                - task: HelmDeploy@0
+                  displayName: 'Initialize Helm'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'prod-container-demo'
+                    useClusterAdmin: true
+                    command: 'init'
+                    arguments: '--service-account tiller --force-upgrade'
+
+                - task: AzureCLI@2
+                  displayName: 'Add ACR to Helm Repository list'
+                  inputs:
+                    azureSubscription: 'AzureMSDN'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az acr helm repo add --name $(registryName)'
+                    failOnStandardError: true
+
+                - task: HelmDeploy@0
+                  displayName: 'Helm Deploy'
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'AzureMSDN'
+                    azureResourceGroup: 'container-pipelines-demo'
+                    kubernetesCluster: 'prod-container-demo'
+                    useClusterAdmin: true
+                    namespace: 'apps'
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: '$(registryName)/$(imageName)'
+                    releaseName: '$(imageName)'
+                    overrideValues: 'image.tag=$(Build.BuildNumber),image.repository=$(registryName).azurecr.io/$(imageName)'
+                    force: true
