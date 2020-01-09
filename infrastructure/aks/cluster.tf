@@ -12,10 +12,16 @@ resource "azurerm_kubernetes_cluster" "main" {
     }
   }
 
-  agent_pool_profile {
-    name    = "default"
-    vm_size = "Standard_DS1_v2"
-    count   = 2
+  default_node_pool {
+    availability_zones = [1, 2, 3]
+    name               = "default"
+    node_count         = 3
+    vm_size            = "Standard_DS1_v2"
+  }
+
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "Standard"
   }
 
   service_principal {

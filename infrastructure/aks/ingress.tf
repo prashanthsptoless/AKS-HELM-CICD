@@ -38,4 +38,5 @@ resource "azurerm_public_ip" "ingress" {
   location            = local.resource_group.location
   name                = "${local.environment}-ingress"
   resource_group_name = azurerm_kubernetes_cluster.main.node_resource_group
+  sku                 = "Standard"
 }
