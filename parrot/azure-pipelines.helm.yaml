@@ -6,18 +6,20 @@ trigger:
     include:
       - parrot/src/parrot/charts
       - parrot/azure-pipelines.helm.yaml
+    exclude:
+      - parrot/azure-pipelines.deploy.yml
   branches:
     include:
       - master
 
 variables:
-  helmVersion: 2.15.2
+  helmVersion: 3.0.2
   containerRepository: parrot
   containerRegistry: containerpipelinesdemoacr
 
 stages:
   - stage: Build
-    displayName: 'Build Helm Chart'
+    displayName: 'Package Helm Chart'
     jobs:
       - job: Helm
         displayName: 'Build and Push Helm Chart'

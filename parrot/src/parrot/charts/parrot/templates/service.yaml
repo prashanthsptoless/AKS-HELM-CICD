@@ -16,6 +16,7 @@ spec:
     app: {{ template "fullname" . }}
 {{ if .Values.ingress.enabled }}
   type: ClusterIP
+  {{ with .Values.service.clusterIP }}clusterIP: {{ quote . }}{{ end }} 
 {{ else }}
   type: LoadBalancer
 {{ end }}

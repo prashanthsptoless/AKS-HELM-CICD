@@ -33,6 +33,7 @@ resource "helm_release" "ingress" {
 }
 
 resource "azurerm_public_ip" "ingress" {
+  depends_on = [azurerm_kubernetes_cluster.main]
   allocation_method   = "Static"
   domain_name_label   = "${local.environment}-container-demo"
   location            = local.resource_group.location

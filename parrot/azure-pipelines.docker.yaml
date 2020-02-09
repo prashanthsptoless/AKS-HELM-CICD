@@ -14,17 +14,18 @@ trigger:
       - master
 
 variables:
+  helmVersion: 3.0.2
   buildConfiguration: 'Release'
   containerRepository: parrot
   containerRegistry: containerpipelinesdemoacr
-  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+  nuget_packages: $(Pipeline.Workspace)/.nuget/packages
 
 stages:
   - stage: Build
     displayName: 'Build Docker Image'
     jobs:
       - job: Docker
-        displayName: 'Build Docker Image'
+        displayName: 'Build and Push Docker Image'
         pool:
           vmImage: 'ubuntu-latest'
 
@@ -36,7 +37,7 @@ stages:
             displayName: Cache NuGet packages
             inputs:
               key: nuget | parrot/src/parrot/package-lock.json
-              path: $(NUGET_PACKAGES)
+              path: $(nuget_packages)
 
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK version 2.2.105'
@@ -85,3 +86,4 @@ stages:
               repository: '$(containerRepository)'
               command: 'push'
               tags: '$(Build.BuildNumber)'
+              

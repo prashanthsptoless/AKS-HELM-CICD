@@ -15,8 +15,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   default_node_pool {
     availability_zones = [1, 2, 3]
     name               = "default"
-    node_count         = 3
-    vm_size            = "Standard_DS1_v2"
+    node_count         = 1
+    vm_size            = "Standard_D4s_v3"
   }
 
   network_profile {
@@ -32,4 +32,5 @@ resource "azurerm_kubernetes_cluster" "main" {
 
 data "azurerm_kubernetes_service_versions" "current" {
   location = local.resource_group.location
+  version_prefix = "1.15"
 }
