@@ -1,6 +1,6 @@
 locals {
   monitored_services = {
-    aks = azurerm_kubernetes_cluster.main.id
+    aks = azurerm_kubernetes_cluster.aks.id
   }
 }
 

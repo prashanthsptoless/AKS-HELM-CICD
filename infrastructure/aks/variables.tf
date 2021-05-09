@@ -13,3 +13,8 @@ variable "resource_group" {
     location = string
   })
 }
+
+variable "instance_id" {
+  type        = string
+  description = "(Required) Unique ID for this instance."
+}

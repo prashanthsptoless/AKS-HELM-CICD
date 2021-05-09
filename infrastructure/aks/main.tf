@@ -1,6 +1,8 @@
 locals {
-  environment             = var.environment
-  kube_config             = azurerm_kubernetes_cluster.main.kube_config.0
+  # kube_config             = azurerm_kubernetes_cluster.main.kube_config.0
+  aks_cluster_name        = "aks-${local.instance_id}-${local.environment}"
+  environment = var.environment
+  instance_id             = var.instance_id
   log_analytics_workspace = var.log_analytics_workspace
   resource_group          = var.resource_group
 }
