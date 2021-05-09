@@ -3,7 +3,7 @@ module "aks_dev" {
 
   environment             = "dev"
   log_analytics_workspace = azurerm_log_analytics_workspace.main
-  resource_group          = azurerm_resource_group.main
+  resource_group          = data.azurerm_resource_group.rg
 }
 
 module "aks_prod" {
@@ -11,6 +11,6 @@ module "aks_prod" {
 
   environment             = "prod"
   log_analytics_workspace = azurerm_log_analytics_workspace.main
-  resource_group          = azurerm_resource_group.main
+  resource_group          = data.azurerm_resource_group.rg
 }
 

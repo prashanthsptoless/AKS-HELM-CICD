@@ -5,23 +5,23 @@ locals {
   resource_group          = var.resource_group
 }
 
-provider "kubernetes" {
-  version = "~> 1.9"
+# provider "kubernetes" {
+#   version = "~> 1.9"
 
-  host                   = local.kube_config["host"]
-  client_certificate     = base64decode(local.kube_config["client_certificate"])
-  client_key             = base64decode(local.kube_config["client_key"])
-  cluster_ca_certificate = base64decode(local.kube_config["cluster_ca_certificate"])
-}
+#   host                   = local.kube_config["host"]
+#   client_certificate     = base64decode(local.kube_config["client_certificate"])
+#   client_key             = base64decode(local.kube_config["client_key"])
+#   cluster_ca_certificate = base64decode(local.kube_config["cluster_ca_certificate"])
+# }
 
 
-provider "helm" {
-  version = "~> 0.10"
+# provider "helm" {
+#   version = "~> 0.10"
 
-  kubernetes {
-    host                   = local.kube_config["host"]
-    client_certificate     = base64decode(local.kube_config["client_certificate"])
-    client_key             = base64decode(local.kube_config["client_key"])
-    cluster_ca_certificate = base64decode(local.kube_config["cluster_ca_certificate"])
-  }
-}
+#   kubernetes {
+#     host                   = local.kube_config["host"]
+#     client_certificate     = base64decode(local.kube_config["client_certificate"])
+#     client_key             = base64decode(local.kube_config["client_key"])
+#     cluster_ca_certificate = base64decode(local.kube_config["cluster_ca_certificate"])
+#   }
+# }
