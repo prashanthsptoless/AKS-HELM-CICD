@@ -5,6 +5,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   name                = local.aks_cluster_name
   node_resource_group = "${local.resource_group.name}-${local.environment}-aks"
   resource_group_name = local.resource_group.name
+  tags                = var.tags
 
   addon_profile {
     azure_policy { enabled = true }

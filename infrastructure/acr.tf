@@ -6,10 +6,10 @@ resource "azurerm_container_registry" "basic" {
   tags                = data.azurerm_resource_group.rg.tags
 }
 
-resource "azurerm_role_assignment" "k8s_acrpull" {
-  count = length(local.cluster_ids)
+# resource "azurerm_role_assignment" "k8s_acrpull" {
+#   count = length(local.cluster_ids)
 
-  principal_id         = local.cluster_ids[count.index]
-  role_definition_name = "AcrPull"
-  scope                = data.azurerm_resource_group.rg.id
-}
+#   principal_id         = local.cluster_ids[count.index]
+#   role_definition_name = "AcrPull"
+#   scope                = data.azurerm_resource_group.rg.id
+# }

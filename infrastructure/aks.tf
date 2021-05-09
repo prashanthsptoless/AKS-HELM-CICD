@@ -5,6 +5,7 @@ module "aks_dev" {
   instance_id             = local.instance_id
   log_analytics_workspace = azurerm_log_analytics_workspace.main
   resource_group          = data.azurerm_resource_group.rg
+  tags                    = data.azurerm_resource_group.rg.tags
 }
 
 module "aks_prod" {
@@ -14,5 +15,6 @@ module "aks_prod" {
   instance_id             = local.instance_id
   log_analytics_workspace = azurerm_log_analytics_workspace.main
   resource_group          = data.azurerm_resource_group.rg
+  tags                    = data.azurerm_resource_group.rg.tags
 }
 

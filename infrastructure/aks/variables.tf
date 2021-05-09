@@ -18,3 +18,8 @@ variable "instance_id" {
   type        = string
   description = "(Required) Unique ID for this instance."
 }
+
+variable "tags" {
+  type        = map(string)
+  description = "(Required) Tags to apply to resources created by this module."
+}
