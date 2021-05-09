@@ -3,9 +3,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version  = data.azurerm_kubernetes_service_versions.current.latest_version
   location            = local.resource_group.location
   name                = local.aks_cluster_name
-  node_resource_group = "${local.resource_group.name}-${local.environment}-aks"
+  node_resource_group = "${var.resource_group.name}-${var.environment}-aks"
   resource_group_name = local.resource_group.name
-  tags                = var.tags
+  tags                = var.resource_group.tags
 
   addon_profile {
     azure_policy { enabled = true }
@@ -25,7 +25,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
     os_disk_size_gb      = 1024
     vm_size              = "Standard_DS2_v2"
-    tags                 = var.tags
+    tags                 = var.resource_group.tags
   }
 
   identity { type = "SystemAssigned" }
