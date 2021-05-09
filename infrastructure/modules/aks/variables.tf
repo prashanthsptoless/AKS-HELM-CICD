@@ -16,7 +16,7 @@ variable "resource_group" {
   type = object({
     name     = string
     location = string
-    tags     = string
+    tags     = map(string)
   })
 }
 
