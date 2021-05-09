@@ -9,5 +9,5 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   orchestrator_version  = data.azurerm_kubernetes_service_versions.current.latest_version
   os_disk_size_gb       = 1024
   vm_size               = "Standard_DS2_v2"
-  tags                  = var.tags
+  tags                  = var.resource_group.tags
 }
