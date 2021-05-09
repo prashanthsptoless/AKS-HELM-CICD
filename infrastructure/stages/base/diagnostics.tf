@@ -4,6 +4,7 @@ module "diagnostics" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
 
   monitored_services = {
-    la = azurerm_log_analytics_workspace.main.id
+    acr = azurerm_container_registry.basic.id
+    la  = azurerm_log_analytics_workspace.main.id
   }
 }
