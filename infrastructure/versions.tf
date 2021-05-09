@@ -1,21 +1,23 @@
 terraform {
-  required_version = ">= 0.12"
-  # backend "azurerm" {
-  #   resource_group_name  = "terraformrg"
-  #   storage_account_name = "terraform0fc88c88375d45c"
-  #   container_name       = "terraform"
-  #   key                  = "container-pipelines-demo.tfstate"
-  # }
-}
+  required_version = ">= 0.15"
+  # backend "azurerm" {}
 
-provider "azuread" {
-  version = "~> 0.6"
+  required_providers {
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 1.4"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 2.58"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1"
+    }
+  }
 }
 
 provider "azurerm" {
-  version = "~> 1.33"
-}
-
-provider "random" {
-  version = "~> 2.2"
+  features {}
 }

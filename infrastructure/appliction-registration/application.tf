@@ -1,5 +1,5 @@
 resource "azuread_application" "aks" {
-  name = "${local.environment}-aks-app"
+  display_name = "${local.environment}-aks-app"
 }
 
 resource "azuread_service_principal" "aks" {
