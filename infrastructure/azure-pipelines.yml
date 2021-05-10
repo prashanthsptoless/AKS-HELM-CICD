@@ -22,15 +22,16 @@ variables:
   - group: terraform-version
   - name: tf_in_automation
     value: true
-  - name: project_folder
-    value: infrastructure
 
 stages:
-  - stage: build
+  - stage: build_base
+    variables:
+      - name: project_folder
+        value: infrastructure/base
 
     jobs:
       - job: plan
-        displayName: 'Infrastructure Plan'
+        displayName: 'Infrastructure Plan (Base)'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -64,7 +65,7 @@ stages:
 
           - template: '../pipeline-templates/publish-plan.yml'
 
-  - stage: deploy
+  - stage: deploy_base
     jobs:
       - deployment: terraform
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
