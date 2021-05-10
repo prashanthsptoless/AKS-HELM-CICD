@@ -67,6 +67,10 @@ stages:
           - template: '../pipeline-templates/publish-plan.yml'
 
   - stage: deploy_base
+    displayName: 'Deploy Base Infrastructure'
+    variables:
+      - name: project_folder
+        value: infrastructure/stages/base
     jobs:
       - deployment: terraform
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
