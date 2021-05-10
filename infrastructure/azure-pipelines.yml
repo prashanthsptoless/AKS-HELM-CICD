@@ -24,14 +24,15 @@ variables:
     value: true
 
 stages:
-  - stage: build_base
+  - stage: plan_base
+    displayName: 'Plan Base Infrastructure'
     variables:
       - name: project_folder
-        value: infrastructure/base
+        value: infrastructure/stages/base
 
     jobs:
       - job: plan
-        displayName: 'Infrastructure Plan (Base)'
+        displayName: 'Infrastructure Plan'
         steps:
           - checkout: self
             fetchDepth: 1
