@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 0.15"
-  # backend "azurerm" {}
+  backend "azurerm" {}
 
   required_providers {
     azuread = {

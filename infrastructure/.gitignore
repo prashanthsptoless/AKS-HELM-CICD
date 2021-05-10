@@ -32,3 +32,4 @@ override.tf.json
 
 plan.tfplan
 terraform.auto.tfvars
+azurerm.backend.tfvars
