@@ -107,7 +107,7 @@ stages:
       - name: project_folder
         value: infrastructure/stages/kubernetes-dev
       - name: TF_STORAGE_BLOB_NAME
-        value: kubernetes-dev.container-pipelines.tfstate
+        value: kubernetes-dev.terraform.tfstate
 
     jobs:
       - job: plan
@@ -141,7 +141,7 @@ stages:
                 terraform plan \
                   -input=false \
                   -var="resource_group_name=${AZURE_ENV_RG}" \
-                  -var="aks_cluster_name='aks-boss-crawdad-dev'" \
+                  -var="aks_cluster_name=aks-boss-crawdad-dev" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
 
           - template: '../pipeline-templates/publish-plan.yml'
