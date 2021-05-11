@@ -145,4 +145,5 @@ stages:
                   -out ${BUILD_BUILDNUMBER}.tfplan
 
           - template: '../pipeline-templates/publish-plan.yml'
-                  
+            parameters:
+              artifactName: kubernetes-dev.plan
