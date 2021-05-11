@@ -1,7 +1,12 @@
+parameters:
+- name: artifactName 
+  type: string 
+  default: 'plan'
+
 steps:
   - task: ExtractFiles@1
     displayName: 'Extract Plan Artifact'
     inputs:
-      archiveFilePatterns: '$(Pipeline.Workspace)/plan/$(Build.BuildNumber).tgz'
+      archiveFilePatterns: '$(Pipeline.Workspace)/${{ parameters.artifactName }}/$(Build.BuildNumber).tgz'
       destinationFolder: '$(project_folder)/'
       cleanDestinationFolder: true
