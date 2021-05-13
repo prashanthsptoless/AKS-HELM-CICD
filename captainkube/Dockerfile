@@ -1,11 +1,10 @@
 # Build
-FROM golang:1.10.3 as builder
+FROM golang:1.14.4 as builder
 
-WORKDIR /go/src/github.com/sabbour/phippy
+WORKDIR /build
 COPY main.go .
-RUN go get -d -v
-# temporary workaroud for https://github.com/Azure/phippyandfriends/issues/30
-RUN cd $GOPATH/src/k8s.io/klog && git checkout v0.4.0 && cd -
+# temporary workaroud for https://github.com/Azure/phippyandfriends/issues/44
+RUN GO111MODULE=on; go mod init captainkube && go get k8s.io/client-go@v0.17.2 && go get -d -v
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 # Run
@@ -13,5 +12,5 @@ FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=builder /go/src/github.com/sabbour/phippy/app .
+COPY --from=builder /build/app .
 CMD ["./app"]
