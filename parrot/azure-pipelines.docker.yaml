@@ -59,7 +59,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: 'parrot/src/parrot/parrot.csproj'
-              arguments: '--configuration $(BuildConfiguration) --output dist'
+              arguments: '--configuration $(BuildConfiguration) --output parrot/src/parrot/dist'
               zipAfterPublish: false
               modifyOutputPath: false
 
