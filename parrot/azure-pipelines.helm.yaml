@@ -13,9 +13,15 @@ trigger:
       - master
 
 variables:
-  helmVersion: 3.0.2
-  containerRepository: parrot
-  containerRegistry: containerpipelinesdemoacr
+  - group: acr
+  - name: helmVersion
+    value: 3.0.2
+  - name: buildConfiguration
+    value: 'Release'
+  - name: containerRepository
+    value: parrot
+  - name: nuget_packages
+    value: $(Pipeline.Workspace)/.nuget/packages
 
 stages:
   - stage: Build
@@ -51,5 +57,5 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az acr helm push \
-                  --name $(containerRegistry) \
+                  --name $(CONTAINER_REGISTRY_NAME) \
                   $(Build.ArtifactStagingDirectory)/$(containerRepository)-$(Build.BuildNumber).tgz
