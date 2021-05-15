@@ -14,11 +14,15 @@ trigger:
       - master
 
 variables:
-  helmVersion: 3.0.2
-  buildConfiguration: 'Release'
-  containerRepository: parrot
-  containerRegistry: crbosscrawdad
-  nuget_packages: $(Pipeline.Workspace)/.nuget/packages
+  - group: acr
+  - name: helmVersion
+    value: 3.0.2
+  - name: buildConfiguration
+    value: 'Release'
+  - name: containerRepository
+    value: parrot
+  - name: nuget_packages
+    value: $(Pipeline.Workspace)/.nuget/packages
 
 stages:
   - stage: Build
@@ -79,7 +83,7 @@ stages:
             displayName: 'Container Scan'
             inputs:
               targetType: 'inline'
-              script: 'trivy image --exit-code 1 $(containerRegistry).azurecr.io/$(containerRepository):$(Build.BuildNumber)'
+              script: 'trivy image --exit-code 1 $(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository):$(Build.BuildNumber)'
               
           - task: Docker@2
             displayName: 'Push Docker Image'
