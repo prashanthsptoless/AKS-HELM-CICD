@@ -46,7 +46,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'Push Helm Chart'
             inputs:
-              azureSubscription: 'AzureMSDN'
+              azureSubscription: 'Azure'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
