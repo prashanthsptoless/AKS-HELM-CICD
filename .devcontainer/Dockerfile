@@ -1,4 +1,4 @@
-ARG VARIANT=5.0
+ARG VARIANT=3.1
 FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-${VARIANT}
 
 COPY library-scripts/*.sh /tmp/library-scripts/
@@ -37,13 +37,15 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "true" ]; then bash /tmp/library-scripts/azcli
     fi \
     && rm -rf /var/lib/apt/lists/*
 
+# Install trivy
+RUN bash /tmp/library-scripts/trivy-debian.sh 
+
 # Install Terraform, tflint, Terragrunt
 ARG TERRAFORM_VERSION=0.12.16
 ARG TFLINT_VERSION=0.8.2
 ARG TERRAGRUNT_VERSION=0.28.1
 RUN bash /tmp/library-scripts/terraform-debian.sh "${TERRAFORM_VERSION}" "${TFLINT_VERSION}" "${TERRAGRUNT_VERSION}" \
     && rm -rf /tmp/library-scripts
-
 
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
