@@ -14,6 +14,7 @@
     "semantic-ui": "^2.4.2"
   },
   "resolutions": {
+    "node-notifier": "^8.0.1",
     "postcss": "^8.2.10"
   }
 }
