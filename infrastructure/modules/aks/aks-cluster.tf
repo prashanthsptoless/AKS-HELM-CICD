@@ -24,15 +24,22 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   default_node_pool {
-    availability_zones   = [1, 2, 3]
-    enable_auto_scaling  = true
-    max_count            = 3
-    min_count            = 1
-    name                 = "system"
-    orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
-    os_disk_size_gb      = 1024
-    vm_size              = "Standard_DS2_v2"
-    tags                 = var.resource_group.tags
+    availability_zones           = [1, 2, 3]
+    enable_auto_scaling          = true
+    max_count                    = 3
+    min_count                    = 1
+    name                         = "system"
+    node_labels                  = var.resource_group.tags
+    only_critical_addons_enabled = true
+    orchestrator_version         = data.azurerm_kubernetes_service_versions.current.latest_version
+    os_disk_size_gb              = 1024
+    tags                         = var.resource_group.tags
+    vm_size                      = "Standard_DS2_v2"
+    vnet_subnet_id               = azurerm_subnet.subnet["aks-subnet"].id
+
+    upgrade_settings {
+      max_surge = "200"
+    }
   }
 
   identity {
@@ -41,8 +48,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin = "kubenet"
-    network_policy = "calico"
+    dns_service_ip     = "10.0.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
+    network_plugin     = "kubenet"
+    network_policy     = "calico"
+    pod_cidr           = "10.244.0.0/16"
+    service_cidr       = "10.0.0.0/16"
   }
 
   role_based_access_control {
