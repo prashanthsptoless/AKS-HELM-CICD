@@ -82,8 +82,7 @@ stages:
           - template: ../pipeline-templates/trivy-scan.yml
             parameters:
               imageName: $(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository):$(Build.BuildNumber)
-              failTaskOnFailedScan: true 
-
+              failTaskOnFailedScan: false
               
           - task: Docker@2
             displayName: 'Push Docker Image'
