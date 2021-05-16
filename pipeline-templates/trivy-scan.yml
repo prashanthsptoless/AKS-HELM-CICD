@@ -14,7 +14,7 @@ steps:
     inputs:
       targetType: 'inline'
       env: 
-        - TRIVY_VERSION: ${{ trivyVersion }}
+        TRIVY_VERSION: ${{ trivyVersion }}
       script: |
         set -euo pipefail
 
