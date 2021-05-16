@@ -21,22 +21,22 @@ steps:
         wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb
         sudo dpkg -i trivy_${TRIVY_VERSION}_Linux-64bit.deb
 
-  - task: Bash@3
-    displayName: 'Container Image Scan'
-    inputs:
-        targetType: 'inline'
-        script: |
-            trivy image \
-            --ignore-unfixed \
-            --format template \
-            --template "@pipeline-templates/junit.tpl" \
-            -o junit-report.xml \
-            ${{ imageName }}
+  # - task: Bash@3
+  #   displayName: 'Container Image Scan'
+  #   inputs:
+  #       targetType: 'inline'
+  #       script: |
+  #           trivy image \
+  #           --ignore-unfixed \
+  #           --format template \
+  #           --template "@pipeline-templates/junit.tpl" \
+  #           -o junit-report.xml \
+  #           ${{ imageName }}
   
-  - task: PublishTestResults@2
-    displayName: 'Publish Trivy Scan Results'
-    inputs:
-        testResultsFormat: 'JUnit' 
-        testResultsFiles: 'junit-report.xml' 
-        failTaskOnFailedTests: ${{ failTaskOnFailedScan }}
-        testRunTitle: 'Trivy Image Scan'
+  # - task: PublishTestResults@2
+  #   displayName: 'Publish Trivy Scan Results'
+  #   inputs:
+  #       testResultsFormat: 'JUnit' 
+  #       testResultsFiles: 'junit-report.xml' 
+  #       failTaskOnFailedTests: ${{ failTaskOnFailedScan }}
+  #       testRunTitle: 'Trivy Image Scan'
