@@ -1,7 +1,7 @@
 parameters:
 - name: trivyVersion
   type: string
-  default: 0.18.1
+  default: '0.18.1'
 - name: failTaskOnFailedScan 
   type: boolean 
   default: true
@@ -12,10 +12,9 @@ steps:
   - task: Bash@3
     displayName: 'Pin Trivy'
     env: 
-      TRIVY_VERSION: ${{ trivyVersion }}    
+      TRIVY_VERSION: ${{ trivyVersion }}
     inputs:
       targetType: 'inline'
-
       script: |
         set -euo pipefail
 
