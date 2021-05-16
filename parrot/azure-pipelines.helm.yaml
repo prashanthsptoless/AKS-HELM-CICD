@@ -25,6 +25,8 @@ variables:
     value: $(CONTAINER_REGISTRY_NAME).azurecr.io
   - name: artifact
     value: "$(login_server)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
+  - name: chart_path
+    value: parrot/src/parrot/charts/parrot
 
 stages:
   - stage: Build
@@ -45,15 +47,22 @@ stages:
               helmVersionToInstall: 'latest'
 
           - task: Bash@3
+            displayName: 'Check Helm Chart'
+            inputs:
+              targetType: 'inline'
+              script: |
+                set -euo pipefail
+
+                helm lint $(chart_path) --strict
+
+          - task: Bash@3
             displayName: 'Save Helm Chart'
             inputs:
               targetType: 'inline'
               script: |
                 set -euo pipefail
 
-                helm chart save \
-                  parrot/src/parrot/charts/parrot \
-                  $(artifact)
+                helm chart save $(chart_path) $(artifact)
 
           - task: AzureCLI@2
             condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
