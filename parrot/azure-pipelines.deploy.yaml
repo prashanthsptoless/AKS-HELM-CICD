@@ -1,4 +1,4 @@
-name: 0.1.$(Rev:r)
+name: 0.2.$(Rev:r)
 
 resources:
   pipelines:
@@ -22,14 +22,8 @@ trigger:
 
 variables:
   - group: acr
-  - name: helmVersion
-    value: 3.0.2
-  - name: buildConfiguration
-    value: 'Release'
   - name: containerRepository
     value: parrot
-  - name: nuget_packages
-    value: $(Pipeline.Workspace)/.nuget/packages
   - name: aksHost
     value: westus2.cloudapp.azure.com
   - name: imageTag
