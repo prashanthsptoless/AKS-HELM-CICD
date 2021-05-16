@@ -50,7 +50,7 @@ stages:
           - task: Cache@2
             displayName: Cache npm
             inputs:
-              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              key: 'npm | "$(Agent.OS)" | $(Build.SourcesDirectory)/parrot/src/parrot/package-lock.json'
               restoreKeys: |
                 npm | "$(Agent.OS)"
               path: $(npm_config_cache)
