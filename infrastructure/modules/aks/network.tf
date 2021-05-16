@@ -1,10 +1,10 @@
 # Create virtual network
 resource "azurerm_virtual_network" "vnet" {
   address_space       = ["10.0.0.0/8"]
-  location            = data.azurerm_resource_group.rg.location
+  location            = local.resource_group.location
   name                = "vnet-${local.aks_cluster_name}"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  tags                = data.azurerm_resource_group.rg.tags
+  resource_group_name = local.resource_group.name
+  tags                = var.resource_group.tags
 }
 
 # Create subnets
@@ -16,6 +16,6 @@ resource "azurerm_subnet" "subnet" {
 
   address_prefixes     = [each.value]
   name                 = each.key
-  resource_group_name  = data.azurerm_resource_group.rg.name
+  resource_group_name  = local.resource_group.name
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
