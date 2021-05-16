@@ -329,5 +329,5 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 .DS_Store
-parrot/src/parrot/dist/
+parrot/src/parrot/out/
 parrot/junit-report.xml
