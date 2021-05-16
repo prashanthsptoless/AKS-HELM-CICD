@@ -1,4 +1,8 @@
 resource "azurerm_kubernetes_cluster" "aks" {
+  depends_on = [
+    azurerm_role_assignment.network_contributor
+  ]
+
   dns_prefix          = local.aks_cluster_name
   kubernetes_version  = data.azurerm_kubernetes_service_versions.current.latest_version
   location            = local.resource_group.location
