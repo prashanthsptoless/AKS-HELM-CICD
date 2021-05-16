@@ -37,10 +37,12 @@ stages:
           - checkout: self
             fetchDepth: 1
 
-          - task: CacheBeta@0
+          - task: Cache@2
             displayName: Cache NuGet packages
             inputs:
-              key: nuget | parrot/src/parrot/package-lock.json
+              key: 'nuget | "$(Agent.OS)" | $(Build.SourcesDirectory)/parrot/src/parrot/packages.lock.json'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
               path: $(nuget_packages)
 
           - task: UseDotNet@2
