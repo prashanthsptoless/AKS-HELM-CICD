@@ -21,10 +21,8 @@ variables:
     value: charts
   - name: HELM_EXPERIMENTAL_OCI
     value: 1
-  - name: login_server
-    value: $(CONTAINER_REGISTRY_NAME).azurecr.io
   - name: artifact
-    value: "$(login_server)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
+    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
   - name: chart_path
     value: parrot/src/parrot/charts/parrot
 
@@ -76,7 +74,7 @@ stages:
                 set -euo pipefail
 
                 echo $servicePrincipalKey | \
-                  helm registry login $(login_server) \
+                  helm registry login $(LOGIN_SERVER) \
                     --username $servicePrincipalId \
                     --password-stdin
 
