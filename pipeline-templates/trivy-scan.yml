@@ -13,11 +13,13 @@ steps:
     displayName: 'Pin Trivy'
     inputs:
       targetType: 'inline'
+      env: 
+        - TRIVY_VERSION: ${{ trivyVersion }}
       script: |
         set -euo pipefail
 
-        wget https://github.com/aquasecurity/trivy/releases/download/v${{ trivyVersion }}/trivy_${{ trivyVersion }}_Linux-64bit.deb
-        sudo dpkg -i trivy_${{ trivyVersion }}_Linux-64bit.deb
+        wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb
+        sudo dpkg -i trivy_${TRIVY_VERSION}_Linux-64bit.deb
 
   - task: Bash@3
     displayName: 'Container Image Scan'
