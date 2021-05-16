@@ -14,7 +14,7 @@ build:
 	docker build -f ./src/parrot/Dockerfile -t parrot:latest ./src/parrot
 
 scan:
-	trivy image parrot:latest
+	trivy image --ignore-unfixed parrot:latest
 
 clean:
 	rm -rf ./src/parrot/dist
