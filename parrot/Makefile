@@ -2,10 +2,9 @@ BuildConfiguration := Release
 
 default: all
 
-all: npmi test publish build scan
+all: clean npmi test publish build scan
 
 npmi: 
-	rm -rf ./src/parrot/node_modules
 	cd ./src/parrot && npm install
 
 test: 
@@ -21,4 +20,5 @@ scan:
 	trivy image --ignore-unfixed parrot:latest
 
 clean:
+	rm -rf ./src/parrot/node_modules
 	rm -rf ./src/parrot/out
