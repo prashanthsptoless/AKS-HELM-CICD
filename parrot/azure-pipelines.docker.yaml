@@ -85,7 +85,16 @@ stages:
             displayName: 'Container Scan'
             inputs:
               targetType: 'inline'
-              script: 'trivy image --ignore-unfixed --format template --template "@../pipeline-templates/junit.tpl" -o junit-report.xml --exit-code 1 $(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository):$(Build.BuildNumber)'
+              script: 'trivy image --ignore-unfixed --format template --template "@pipeline-templates/junit.tpl" -o junit-report.xml $(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository):$(Build.BuildNumber)'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Vulnerability Test Results'
+            inputs:
+              testResultsFormat: 'JUnit' 
+              testResultsFiles: 'junit-report.xml' 
+              failTaskOnFailedTests: true 
+              testRunTitle: 'Trivy Image Scan'
+
               
           - task: Docker@2
             displayName: 'Push Docker Image'
