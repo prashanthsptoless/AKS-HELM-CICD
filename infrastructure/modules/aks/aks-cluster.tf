@@ -31,7 +31,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
     tags                 = var.resource_group.tags
   }
 
-  identity { type = "SystemAssigned" }
+  identity {
+    type                      = "UserAssigned"
+    user_assigned_identity_id = azurerm_user_assigned_identity.aks.id
+  }
 
   network_profile {
     network_plugin = "kubenet"
