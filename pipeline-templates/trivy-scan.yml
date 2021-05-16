@@ -11,10 +11,11 @@ parameters:
 steps:
   - task: Bash@3
     displayName: 'Pin Trivy'
+    env: 
+      TRIVY_VERSION: ${{ trivyVersion }}    
     inputs:
       targetType: 'inline'
-      env: 
-        TRIVY_VERSION: ${{ trivyVersion }}
+
       script: |
         set -euo pipefail
 
