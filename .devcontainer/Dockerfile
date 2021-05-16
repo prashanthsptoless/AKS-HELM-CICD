@@ -51,4 +51,5 @@ ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
 # [Optional] Uncomment this section to install additional OS packages.
+RUN nvm install 11
 RUN npm install --global gulp-cli
