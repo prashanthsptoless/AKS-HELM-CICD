@@ -330,3 +330,4 @@ ASALocalRun/
 .mfractor/
 .DS_Store
 parrot/src/parrot/dist/
+parrot/junit-report.xml
