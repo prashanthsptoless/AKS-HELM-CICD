@@ -23,6 +23,8 @@ variables:
     value: parrot
   - name: nuget_packages
     value: $(Pipeline.Workspace)/.nuget/packages
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
 
 stages:
   - stage: Build
@@ -45,11 +47,29 @@ stages:
                 nuget | "$(Agent.OS)"
               path: $(nuget_packages)
 
+          - task: Cache@2
+            displayName: Cache npm
+            inputs:
+              key: 'npm | "$(Agent.OS)" | package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: $(npm_config_cache)
+
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK version 3.1.408'
             inputs:
               packageType: 'sdk'
               version: '3.1.408'
+
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '11.x' 
+
+          - task: Bash@3
+            displayName: 'Restore NPM packages'
+            inputs:
+              targetType: 'inline'
+              script: 'npm ci'
 
           - task: DotNetCoreCLI@2
             displayName: 'Run Unit Tests'
@@ -65,7 +85,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: 'parrot/src/parrot/parrot.csproj'
-              arguments: '--configuration $(BuildConfiguration) --output parrot/src/parrot/dist'
+              arguments: '--configuration $(BuildConfiguration) --output parrot/src/parrot/out'
               zipAfterPublish: false
               modifyOutputPath: false
 
