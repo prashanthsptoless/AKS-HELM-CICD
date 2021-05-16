@@ -8,20 +8,23 @@ trigger:
       - parrot/azure-pipelines.helm.yaml
     exclude:
       - parrot/azure-pipelines.deploy.yml
+      - parrot/azure-pipelines.docker.yml
   branches:
     include:
       - master
 
 variables:
   - group: acr
-  - name: helmVersion
-    value: 3.0.2
-  - name: buildConfiguration
-    value: 'Release'
   - name: containerRepository
     value: parrot
-  - name: nuget_packages
-    value: $(Pipeline.Workspace)/.nuget/packages
+  - name: namespace
+    value: charts
+  - name: HELM_EXPERIMENTAL_OCR
+    value: 1
+  - name: login_server
+    value: $(CONTAINER_REGISTRY_NAME).azurecr.io
+  - name: artifact
+    value: "$(login_server)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
 
 stages:
   - stage: Build
@@ -39,23 +42,33 @@ stages:
           - task: HelmInstaller@1
             displayName: 'Initialize Helm'
             inputs:
-              helmVersionToInstall: '$(helmVersion)'
+              helmVersionToInstall: 'latest'
 
-          - task: HelmDeploy@0
-            displayName: 'Package Helm Chart'
+          - task: Bash@3
+            displayName: 'Save Helm Chart'
             inputs:
-              command: 'package'
-              chartPath: 'parrot/src/parrot/charts/parrot'
-              chartVersion: '$(Build.BuildNumber)'
-              save: false
+              targetType: 'inline'
+              script: |
+                set -euo pipefail
+
+                helm chart save \
+                  parrot/src/parrot/charts/parrot \
+                  $(artifact)
 
           - task: AzureCLI@2
+            condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
             displayName: 'Push Helm Chart'
             inputs:
+              addSpnToEnvironment: true
               azureSubscription: 'Azure'
-              scriptType: 'bash'
               scriptLocation: 'inlineScript'
+              scriptType: 'bash'
               inlineScript: |
-                az acr helm push \
-                  --name $(CONTAINER_REGISTRY_NAME) \
-                  $(Build.ArtifactStagingDirectory)/$(containerRepository)-$(Build.BuildNumber).tgz
+                set -euo pipefail
+
+                echo $servicePrincipalKey | \
+                  helm registry login $(login_server) \
+                    --username $servicePrincipalId \
+                    --password-stdin
+
+                helm chart push $(artifact)
