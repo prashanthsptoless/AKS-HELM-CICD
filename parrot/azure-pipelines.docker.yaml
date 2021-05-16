@@ -1,4 +1,4 @@
-name: 0.1.$(Rev:r)
+name: 0.2.$(Rev:r)
 
 trigger:
   batch: true
@@ -11,12 +11,12 @@ trigger:
       - 'parrot/azure-pipelines.helm.yaml'
   branches:
     include:
-      - master
+      - main
 
 variables:
   - group: acr
   - name: helmVersion
-    value: 3.0.2
+    value: 3.5.4
   - name: buildConfiguration
     value: 'Release'
   - name: containerRepository

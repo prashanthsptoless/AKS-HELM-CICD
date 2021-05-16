@@ -3,13 +3,13 @@ name: 0.1.$(Rev:r)
 resources:
   pipelines:
     - pipeline: build
-      source: 'lifecycle-demo-docker'
+      source: 'parrot_docker'
       trigger: true
-      branch: master
+      branch: main
     - pipeline: helm
-      source: 'lifecycle-demo-helm'
+      source: 'parrot_helm'
       trigger: true
-      branch: master
+      branch: main
 
 trigger:
   batch: true
@@ -18,14 +18,22 @@ trigger:
       - parrot/azure-pipelines.deploy.yaml
   branches:
     include:
-      - master
+      - main
 
 variables:
-  helmVersion: 3.0.2
-  aksHost: westus2.cloudapp.azure.com
-  containerRepository: parrot
-  containerRegistry: containerpipelinesdemoacr
-  imageTag: $(resources.pipeline.build.runName)
+  - group: acr
+  - name: helmVersion
+    value: 3.0.2
+  - name: buildConfiguration
+    value: 'Release'
+  - name: containerRepository
+    value: parrot
+  - name: nuget_packages
+    value: $(Pipeline.Workspace)/.nuget/packages
+  - name: aksHost
+    value: westus2.cloudapp.azure.com
+  - name: imageTag
+    value: $(resources.pipeline.build.runName)
 
 stages:
   - stage:
@@ -55,7 +63,7 @@ stages:
                     azureSubscription: 'AzureMSDN'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
+                    inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
                     failOnStandardError: true
 
                 - task: HelmDeploy@0
@@ -69,9 +77,9 @@ stages:
                     namespace: 'apps'
                     command: 'upgrade'
                     chartType: 'Name'
-                    chartName: '$(containerRegistry)/$(containerRepository)'
+                    chartName: '$(CONTAINER_REGISTRY_NAME)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository)'
 
 
   - stage:
@@ -101,7 +109,7 @@ stages:
                     azureSubscription: 'AzureMSDN'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
+                    inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
                     failOnStandardError: true
 
                 - task: HelmDeploy@0
@@ -115,6 +123,6 @@ stages:
                     namespace: 'apps'
                     command: 'upgrade'
                     chartType: 'Name'
-                    chartName: '$(containerRegistry)/$(containerRepository)'
+                    chartName: '$(CONTAINER_REGISTRY_NAME)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(imageTag),image.repository=$(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository)'
