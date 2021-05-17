@@ -6,8 +6,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   min_count             = 1
   mode                  = "User"
   name                  = "user"
+  node_labels           = var.resource_group.tags
   orchestrator_version  = data.azurerm_kubernetes_service_versions.current.latest_version
   os_disk_size_gb       = 1024
-  vm_size               = "Standard_DS2_v2"
   tags                  = var.resource_group.tags
+  vm_size               = "Standard_DS2_v2"
+  vnet_subnet_id        = azurerm_subnet.subnet["aks-subnet"].id
+
+  upgrade_settings {
+    max_surge = "200"
+  }
 }
