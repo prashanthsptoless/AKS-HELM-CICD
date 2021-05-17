@@ -128,7 +128,7 @@ resource "azurerm_application_gateway" "agw" {
       name                           = http_listener.key
       protocol                       = "Https"
       require_sni                    = true
-      ssl_certificate_name           = http_listener.key
+      #   ssl_certificate_name           = http_listener.key
     }
   }
 
