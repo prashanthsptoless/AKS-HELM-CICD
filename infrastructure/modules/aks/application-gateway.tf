@@ -72,9 +72,9 @@ resource "azurerm_application_gateway" "agw" {
       name                  = backend_http_settings.key
       path                  = "/"
       port                  = 443
-      probe_name            = backend_http_settings.key
-      protocol              = "Https"
-      request_timeout       = 180
+      #   probe_name            = backend_http_settings.key
+      protocol        = "Https"
+      request_timeout = 180
     }
   }
 
