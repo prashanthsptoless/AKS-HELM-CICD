@@ -7,3 +7,5 @@ locals {
   log_analytics_workspace  = var.log_analytics_workspace
   resource_group           = var.resource_group
 }
+
+data "azurerm_client_config" "current" {}
