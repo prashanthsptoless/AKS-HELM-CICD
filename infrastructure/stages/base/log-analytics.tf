@@ -13,7 +13,7 @@ resource "azurerm_log_analytics_solution" "insights" {
   resource_group_name   = data.azurerm_resource_group.rg.name
   workspace_resource_id = azurerm_log_analytics_workspace.main.id
   workspace_name        = azurerm_log_analytics_workspace.main.name
-  tags = data.azurerm_resource_group.rg.tags
+  tags                  = data.azurerm_resource_group.rg.tags
 
   plan {
     publisher = "Microsoft"
