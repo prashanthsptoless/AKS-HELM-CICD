@@ -40,6 +40,15 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "true" ]; then bash /tmp/library-scripts/azcli
 # Install trivy
 RUN bash /tmp/library-scripts/trivy-debian.sh 
 
+# AWS
+COPY library-scripts/aws.sh  /tmp/library-scripts/
+RUN bash /tmp/library-scripts/aws.sh 
+
+# CERTBOT
+COPY library-scripts/certbot.sh  /tmp/library-scripts/
+RUN bash /tmp/library-scripts/certbot.sh \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Terraform, tflint, Terragrunt
 ARG TERRAFORM_VERSION=0.12.16
 ARG TFLINT_VERSION=0.8.2
@@ -50,6 +59,4 @@ RUN bash /tmp/library-scripts/terraform-debian.sh "${TERRAFORM_VERSION}" "${TFLI
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
-# [Optional] Uncomment this section to install additional OS packages.
-RUN nvm install 11
-RUN npm install --global gulp-cli
+
