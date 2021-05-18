@@ -33,7 +33,7 @@ locals {
 
   agw_listeners = {
     aks = {
-      hostname = "${local.environment_id}.jamesrcounts.com"
+
     }
   }
 }

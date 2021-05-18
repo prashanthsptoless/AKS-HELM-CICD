@@ -1,3 +1,14 @@
+variable "certs_path" {
+  description = "(Required) The path to a folder containing TLS certificates for the environment."
+  type        = string
+}
+
+variable "cert_password" {
+  description = "(Required) The password for the TLS certficate for this environment."
+  sensitive   = true
+  type        = string
+}
+
 variable "environment" {
   description = "(Required) The environment tag, examples: dev, tst, prd."
   type        = string

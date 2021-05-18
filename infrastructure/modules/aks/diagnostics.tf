@@ -6,6 +6,6 @@ module "diagnostics" {
   monitored_services = {
     aks  = azurerm_kubernetes_cluster.aks.id
     vnet = azurerm_virtual_network.vnet.id
-    kv = azurerm_key_vault.ops.id
+    kv   = azurerm_key_vault.ops.id
   }
 }
