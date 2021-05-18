@@ -1,6 +1,8 @@
 module "aks_dev" {
   source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureaiconf.6.21"
 
+  cert_password           = var.cert_password_dev
+  certs_path              = "${path.module}/certs"
   environment             = "dev"
   instance_id             = local.instance_id
   log_analytics_workspace = azurerm_log_analytics_workspace.main
@@ -10,6 +12,8 @@ module "aks_dev" {
 module "aks_prd" {
   source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureaiconf.6.21"
 
+  cert_password           = var.cert_password_prd
+  certs_path              = "${path.module}/certs"
   environment             = "prd"
   instance_id             = local.instance_id
   log_analytics_workspace = azurerm_log_analytics_workspace.main
