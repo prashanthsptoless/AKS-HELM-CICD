@@ -40,6 +40,9 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "true" ]; then bash /tmp/library-scripts/azcli
 # Install trivy
 RUN bash /tmp/library-scripts/trivy-debian.sh 
 
+# Install azcopy
+RUN bash /tmp/library-scripts/azcopy.sh
+
 # AWS
 COPY library-scripts/aws.sh  /tmp/library-scripts/
 RUN bash /tmp/library-scripts/aws.sh 
