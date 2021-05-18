@@ -1,5 +1,8 @@
 default: all
 
+backend_storage_account_name := "saengagedemu"
+backend_storage_container_name := "certs"
+
 fmt:
 	terraform fmt -recursive
 
@@ -17,6 +20,8 @@ validate:
 
 config:
 	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
+	@echo 'backend_resource_group_name="rg-backend-engaged-emu"' >> terraform.auto.tfvars
+	@echo 'backend_storage_account_name="$(backend_storage_account_name)"' >> terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan
@@ -28,6 +33,7 @@ apply:
 all: init plan
 
 login:
-	az login
-	az account set --subscription "Jim Counts (MSDN)"
-	az account show
+	bash ../../scripts/az-login.sh
+
+download:
+	bash ../../scripts/download-certs.sh $(backend_storage_account_name) $(backend_storage_container_name) 
