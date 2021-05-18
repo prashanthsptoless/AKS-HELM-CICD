@@ -1,15 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DOMAIN=${1}
+
 # Debug info
 certbot --version
 
 # make directories
-mkdir -p ~/certbot/{config,work,log}
+mkdir -p ~/certbot/{config,work,log,certs}
 
 # Get certificates using Route53 for validation
-DOMAIN="boss-crawdad-prd.jamesrcounts.com"
-certbot certonly --logs-dir ~/certbot/log --config-dir ~/certbot/config --work-dir ~/certbot/work --dns-route53 -d ${DOMAIN}
+certbot certonly \
+    --logs-dir ~/certbot/log \
+    --config-dir ~/certbot/config \
+    --work-dir ~/certbot/work \
+    --dns-route53 \
+    -d ${DOMAIN}
 
 # PFX
-openssl pkcs12 -export -inkey ~/certbot/config/live/${DOMAIN}/privkey.pem -in ~/certbot/config/live/${DOMAIN}/cert.pem -out ${DOMAIN}.pfx
+openssl pkcs12 \
+    -export \
+    -inkey ~/certbot/config/live/${DOMAIN}/privkey.pem \
+    -in ~/certbot/config/live/${DOMAIN}/cert.pem \
+    -out ~/certbot/certs/${DOMAIN}.pfx
