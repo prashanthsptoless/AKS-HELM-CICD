@@ -14,8 +14,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   addon_profile {
     azure_policy { enabled = true }
     ingress_application_gateway {
-      enabled     = true
-      subnet_cidr = "10.2.0.0/16"
+      enabled    = true
+      gateway_id = azurerm_application_gateway.agw.id
     }
     oms_agent {
       enabled                    = true
