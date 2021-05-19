@@ -39,6 +39,10 @@ locals {
 }
 
 resource "azurerm_application_gateway" "agw" {
+  depends_on = [
+    azurerm_role_assignment.keyvault_secrets_user
+  ]
+
   location            = local.resource_group.location
   name                = local.application_gateway_name
   resource_group_name = local.resource_group.name
