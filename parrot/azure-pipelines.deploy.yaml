@@ -5,11 +5,11 @@ resources:
     - pipeline: build
       source: 'parrot_docker'
       trigger: true
-      branch: main
+      branch: azureaiconf.6.21
     - pipeline: helm
       source: 'parrot_helm'
       trigger: true
-      branch: main
+      branch: azureaiconf.6.21
 
 trigger:
   batch: true
