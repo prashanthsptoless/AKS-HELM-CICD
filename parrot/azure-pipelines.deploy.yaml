@@ -54,7 +54,7 @@ stages:
                 - task: AzureCLI@2
                   displayName: 'Add ACR to Helm Repository list'
                   inputs:
-                    azureSubscription: 'AzureMSDN'
+                    azureSubscription: 'Azure'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
@@ -64,7 +64,7 @@ stages:
                   displayName: 'Helm Deploy'
                   inputs:
                     connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
+                    azureSubscription: 'Azure'
                     azureResourceGroup: 'container-pipelines-demo'
                     kubernetesCluster: 'dev-container-demo'
                     useClusterAdmin: true
@@ -100,7 +100,7 @@ stages:
                 - task: AzureCLI@2
                   displayName: 'Add ACR to Helm Repository list'
                   inputs:
-                    azureSubscription: 'AzureMSDN'
+                    azureSubscription: 'Azure'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
@@ -110,7 +110,7 @@ stages:
                   displayName: 'Helm Deploy'
                   inputs:
                     connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
+                    azureSubscription: 'Azure'
                     azureResourceGroup: 'container-pipelines-demo'
                     kubernetesCluster: 'prod-container-demo'
                     useClusterAdmin: true
