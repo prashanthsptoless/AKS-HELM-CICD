@@ -49,7 +49,7 @@ stages:
                 - task: HelmInstaller@1
                   displayName: 'Install Helm'
                   inputs:
-                    helmVersionToInstall: '$(helmVersion)'
+                    helmVersionToInstall: 'latest'
 
                 - task: AzureCLI@2
                   displayName: 'Add ACR to Helm Repository list'
@@ -65,8 +65,8 @@ stages:
                   inputs:
                     connectionType: 'Azure Resource Manager'
                     azureSubscription: 'Azure'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'dev-container-demo'
+                    azureResourceGroup: 'rg-boss-crawdad'
+                    kubernetesCluster: 'aks-boss-crawdad-dev'
                     useClusterAdmin: true
                     namespace: 'apps'
                     command: 'upgrade'
@@ -95,7 +95,7 @@ stages:
                 - task: HelmInstaller@1
                   displayName: 'Install Helm'
                   inputs:
-                    helmVersionToInstall: '$(helmVersion)'
+                    helmVersionToInstall: 'latest'
 
                 - task: AzureCLI@2
                   displayName: 'Add ACR to Helm Repository list'
@@ -111,8 +111,8 @@ stages:
                   inputs:
                     connectionType: 'Azure Resource Manager'
                     azureSubscription: 'Azure'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'prod-container-demo'
+                    azureResourceGroup: 'rg-boss-crawdad'
+                    kubernetesCluster: 'aks-boss-crawdad-prd'
                     useClusterAdmin: true
                     namespace: 'apps'
                     command: 'upgrade'
