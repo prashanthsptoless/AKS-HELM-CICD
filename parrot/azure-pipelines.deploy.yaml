@@ -25,7 +25,7 @@ variables:
   - name: containerRepository
     value: parrot
   - name: aksHost
-    value: westus2.cloudapp.azure.com
+    value: jamesrcounts.com
   - name: imageTag
     value: $(resources.pipeline.build.runName)
 
@@ -33,13 +33,13 @@ stages:
   - stage:
     displayName: Deploy to DEV
     variables:
-      aksHostDev: dev-container-demo.$(aksHost)
+      aksHostDev: boss-crawdad-dev.$(aksHost)
     jobs:
       - deployment: Dev
         displayName: Deploy to Dev Environment
         pool:
           vmImage: 'ubuntu-latest'
-        environment: dev.apps
+        environment: kubernetes-dev.apps
         strategy:
           runOnce:
             deploy:
@@ -82,10 +82,10 @@ stages:
       - deployment: Prod
         displayName: Deploy to Prod Environment
         variables:
-          aksHostProd: prod-container-demo.$(aksHost)
+          aksHostProd: boss-crawdad-prd.$(aksHost)
         pool:
           vmImage: 'ubuntu-latest'
-        environment: prod.apps
+        environment: kubernetes-prd.apps
         strategy:
           runOnce:
             deploy:
