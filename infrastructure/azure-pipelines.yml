@@ -45,12 +45,11 @@ stages:
           - task: AzureCLI@2
             displayName: 'Download Certificates'
             inputs:
-              addSpnToEnvironment: true
               azureSubscription: 'Azure'
-              scriptLocation: 'scriptPath'
               scriptType: 'bash'
-              scriptPath: : './scripts/download-certs.sh'
-              arguments: "${TF_STORAGE_ACCOUNT} certs"
+              scriptLocation: 'scriptPath'
+              scriptPath: 'infrastructure/scripts/download-certs.sh'
+              arguments: '${TF_STORAGE_ACCOUNT} certs'
 
           - task: Bash@3
             name: 'terraform_plan'
