@@ -20,8 +20,8 @@ validate:
 
 config:
 	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
-	@echo 'cert_password_dev="${CERT_PASSWORD_DEV}"' >> terraform.auto.tfvars
-	@echo 'cert_password_prd="${CERT_PASSWORD_PRD}"' >> terraform.auto.tfvars
+	@echo 'backend_resource_group_name="rg-backend-engaged-emu"' >> terraform.auto.tfvars
+	@echo 'configuration_keyvault_name="kv-engaged-emu"' >> terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan

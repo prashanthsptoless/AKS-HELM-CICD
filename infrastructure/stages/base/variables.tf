@@ -1,12 +1,10 @@
-variable "cert_password_dev" {
-  description = "(Required) The password for the TLS certficate for the dev environment."
-  sensitive   = true
+variable "backend_resource_group_name" {
+  description = "(Required) The name of the resource group containing backend resources for this project."
   type        = string
 }
 
-variable "cert_password_prd" {
-  description = "(Required) The password for the TLS certficate for the prd environment."
-  sensitive   = true
+variable "configuration_keyvault_name" {
+  description = "(Required) The name of the key vault containing configuration data."
   type        = string
 }
 
