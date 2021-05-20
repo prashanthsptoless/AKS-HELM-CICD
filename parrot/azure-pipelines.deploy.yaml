@@ -22,6 +22,7 @@ trigger:
 
 variables:
   - group: acr
+  - group: azure-env
   - name: containerRepository
     value: parrot
   - name: aksHost
