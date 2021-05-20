@@ -61,6 +61,9 @@ stages:
 
                 - task: AzureCLI@2
                   displayName: 'Prepare Deployment'
+                  env:
+                    AKS_RG: $(AZURE_ENV_RG)
+                    REGISTRY_SERVER: $(LOGIN_SERVER)
                   inputs:
                     addSpnToEnvironment: true
                     azureSubscription: 'Azure'
@@ -74,7 +77,7 @@ stages:
 
                       echo "Login to AKS"
                       az aks get-credentials \
-                        --resource_group $(AZURE_ENV_RG) \
+                        --resource_group ${AKS_RG} \
                         --name 'aks-boss-crawdad-dev' \
                         --admin \
                         --overwrite-existing
@@ -84,7 +87,7 @@ stages:
 
                       echo "Registry Login"
                       echo $servicePrincipalKey | \
-                        helm registry login $(CONTAINER_REGISTRY_NAME) \
+                        helm registry login ${REGISTRY_SERVER} \
                           --username $servicePrincipalId \
                           --password-stdin
 
