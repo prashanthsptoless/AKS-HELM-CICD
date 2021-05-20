@@ -28,6 +28,14 @@ variables:
     value: jamesrcounts.com
   - name: imageTag
     value: $(resources.pipeline.build.runName)
+  - name: chartTag
+    value: $(resources.pipeline.helm.runName)
+  - name: HELM_EXPERIMENTAL_OCI
+    value: 1
+  - name: namespace
+    value: charts
+  - name: artifact
+    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(chartTag)"
 
 stages:
   - stage:
@@ -52,13 +60,43 @@ stages:
                     helmVersionToInstall: 'latest'
 
                 - task: AzureCLI@2
-                  displayName: 'Add ACR to Helm Repository list'
+                  displayName: 'Prepare Deployment'
                   inputs:
+                    addSpnToEnvironment: true
                     azureSubscription: 'Azure'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
                     failOnStandardError: true
+                    scriptLocation: 'inlineScript'
+                    scriptType: 'bash'
+                    inlineScript: |
+                      set -euo pipefail
+
+                      helm version
+
+                      echo "Login to AKS"
+                      az aks get-credentials \
+                        --resource_group ${AZURE_ENV_RG} \
+                        --name 'aks-boss-crawdad-dev' \
+                        --admin \
+                        --overwrite-existing
+
+                      echo "Sanity Check"
+                      helm list -A
+
+                      echo "Registry Login"
+                      echo $servicePrincipalKey | \
+                        helm registry login $(CONTAINER_REGISTRY_NAME) \
+                          --username $servicePrincipalId \
+                          --password-stdin
+
+                      echo "Retrieve Artifact"
+                      helm chart pull $(artifact)
+
+                      echo "Unpack Artifact"
+                      CHART_PATH="$(containerRepository)-$(chartTag)"
+                      helm chart export "$(artifact)" --destination ./${CHART_PATH}
+
+                      echo "Sanity Check"
+                      helm show chart ./${CHART_PATH}/$(containerRepository)
 
                 - task: HelmDeploy@0
                   displayName: 'Helm Deploy'
