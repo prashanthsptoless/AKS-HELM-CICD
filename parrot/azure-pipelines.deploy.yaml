@@ -74,7 +74,7 @@ stages:
 
                       echo "Login to AKS"
                       az aks get-credentials \
-                        --resource_group ${AZURE_ENV_RG} \
+                        --resource_group $(AZURE_ENV_RG) \
                         --name 'aks-boss-crawdad-dev' \
                         --admin \
                         --overwrite-existing
