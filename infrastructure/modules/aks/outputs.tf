@@ -1,5 +1,5 @@
 output "cluster_identity_principal_id" {
-  value = azurerm_kubernetes_cluster.aks.identity.0.principal_id
+  value = azurerm_user_assigned_identity.aks.principal_id
 }
 
 output "kubelet_identity_object_id" {
