@@ -13,20 +13,17 @@ pr:
     include:
       - main
 
-pool:
-  vmImage: ubuntu-latest
-  
 variables:
   - template: '../pipeline-templates/infrastructure-variables.yml'
-  - group: key-vault
-
 
 stages:
-  - stage: plan_base
-    displayName: 'Plan Base Infrastructure'
+  - stage: plan_kubernetes_prd
+    displayName: 'Plan Kubernetes Prd Infrastructure'
     variables:
       - name: project_folder
-        value: infrastructure/stages/base
+        value: infrastructure/stages/kubernetes-prd
+      - name: TF_STORAGE_BLOB_NAME
+        value: kubernetes-prd.terraform.tfstate
 
     jobs:
       - job: plan
@@ -38,16 +35,6 @@ stages:
           - template: '../pipeline-templates/prepare-credentials.yml'
           - template: '../pipeline-templates/pin-terraform.yml'
           - template: '../pipeline-templates/terraform-init.yml'
-
-          - task: AzureCLI@2
-            displayName: 'Download Certificates'
-            inputs:
-              arguments: '$(TF_STORAGE_ACCOUNT) certs'
-              azureSubscription: 'Azure'
-              scriptLocation: 'scriptPath'
-              scriptPath: '$(Build.SourcesDirectory)/infrastructure/scripts/download-certs.sh'
-              scriptType: 'bash'
-              workingDirectory: $(project_folder)
 
           - task: Bash@3
             name: 'terraform_plan'
@@ -70,27 +57,31 @@ stages:
                 terraform plan \
                   -input=false \
                   -var="resource_group_name=${AZURE_ENV_RG}" \
-                  -var "backend_resource_group_name=${KEYVAULT_RESOURCE_GROUP_NAME}" \
-                  -var "configuration_keyvault_name=${KEYVAULT_NAME}" \
+                  -var="aks_cluster_name=aks-boss-crawdad-prd" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
 
           - template: '../pipeline-templates/publish-plan.yml'
+            parameters:
+              artifactName: kubernetes-prd.plan
 
-  - stage: deploy_base
-    displayName: 'Deploy Base Infrastructure'
+  - stage: deploy_kubernetes_prd
+    displayName: 'Deploy Kubernetes Prd'
     variables:
       - name: project_folder
-        value: infrastructure/stages/base
+        value: infrastructure/stages/kubernetes-prd
     jobs:
       - deployment: terraform
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
         displayName: 'Change Infrastructure'
-        environment: 'base'
+        environment: 'kubernetes-prd'
         strategy:
           runOnce:
             deploy:
               steps:
                 - template: '../pipeline-templates/extract-plan.yml'
+                  parameters:
+                    artifactName: kubernetes-prd.plan
+                  
                 - template: '../pipeline-templates/prepare-credentials.yml'
                 - template: '../pipeline-templates/pin-terraform.yml'
 
@@ -110,6 +101,3 @@ stages:
                       terraform apply \
                         -input=false \
                         ${BUILD_BUILDNUMBER}.tfplan
-
-
-
