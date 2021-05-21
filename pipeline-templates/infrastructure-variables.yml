@@ -1,2 +1,5 @@
 variables:
   - group: terraform-version
+  - group: terraform-backend
+  - name: tf_in_automation
+    value: true
