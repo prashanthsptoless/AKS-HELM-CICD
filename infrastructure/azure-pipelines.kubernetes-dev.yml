@@ -1,5 +1,8 @@
 name: 0.2.$(Rev:r)
 
+variables:
+  - template: '../pipeline-templates/infrastructure-variables.yml'
+
 stages:
   - stage: plan_kubernetes_dev
     displayName: 'Plan Kubernetes Dev Infrastructure'
