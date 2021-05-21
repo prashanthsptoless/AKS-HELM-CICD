@@ -37,6 +37,8 @@ variables:
     value: charts
   - name: artifact
     value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(chartTag)"
+  - name: local_chart_path
+    value: "$(containerRepository)-$(chartTag)"
 
 stages:
   - stage:
@@ -65,6 +67,7 @@ stages:
                   env:
                     AKS_RG: $(AZURE_ENV_RG)
                     REGISTRY_SERVER: $(LOGIN_SERVER)
+                    CHART_PATH: $(local_chart_path)
                   inputs:
                     addSpnToEnvironment: true
                     azureSubscription: 'Azure'
@@ -96,26 +99,24 @@ stages:
                       helm chart pull $(artifact)
 
                       echo "Unpack Artifact"
-                      CHART_PATH="$(containerRepository)-$(chartTag)"
                       helm chart export "$(artifact)" --destination ./${CHART_PATH}
 
                       echo "Sanity Check"
                       helm show chart ./${CHART_PATH}/$(containerRepository)
 
                 - task: HelmDeploy@0
-                  displayName: 'Helm Deploy'
                   inputs:
                     connectionType: 'Azure Resource Manager'
                     azureSubscription: 'Azure'
-                    azureResourceGroup: 'rg-boss-crawdad'
+                    azureResourceGroup: $(AZURE_ENV_RG)
                     kubernetesCluster: 'aks-boss-crawdad-dev'
                     useClusterAdmin: true
                     namespace: 'apps'
                     command: 'upgrade'
-                    chartType: 'Name'
-                    chartName: '$(CONTAINER_REGISTRY_NAME)/$(containerRepository)'
+                    chartType: 'FilePath'
+                    chartPath: './$(local_chart_path)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
 
 
   - stage:
