@@ -4,7 +4,23 @@ resource "helm_release" "nginx_ingress" {
   namespace  = kubernetes_namespace.apps.metadata.0.name
   repository = "https://kubernetes.github.io/ingress-nginx"
 
-  #   values = [
-  #     file("nginx-ingress/values.yaml")
-  #   ]
+  set {
+    name  = "kind"
+    value = "DaemonSet"
+  }
+
+  set {
+    name  = "controller.service.ports.https"
+    value = "443"
+  }
+
+  set {
+    name  = "controller.service.annotations.service.beta.kubernetes.io/azure-load-balancer-internal"
+    value = "true"
+  }
+
+  set {
+    name  = "controller.service.loadBalancerIP"
+    value = cidrhost(var.aks_subnet_cidr, 250)
+  }
 }
