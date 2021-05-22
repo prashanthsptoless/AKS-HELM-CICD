@@ -13,10 +13,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   addon_profile {
     azure_policy { enabled = true }
-    # ingress_application_gateway {
-    #   enabled    = true
-    #   gateway_id = azurerm_application_gateway.agw.id
-    # }
     oms_agent {
       enabled                    = true
       log_analytics_workspace_id = local.log_analytics_workspace.id
