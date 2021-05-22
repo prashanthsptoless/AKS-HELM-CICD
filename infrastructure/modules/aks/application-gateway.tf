@@ -1,30 +1,3 @@
-
-# locals {
-#   
-#   http_setting_name              = "${local.application_gateway_name}-be-htst"
-#   listener_name                  = "${local.application_gateway_name}-httplstn"
-#   request_routing_rule_name      = "${local.application_gateway_name}-rqrt"
-#   redirect_configuration_name    = "${local.application_gateway_name}-rdrcfg"
-
-#   agw_listeners = {
-#     gateway = {
-#       certificate = azurerm_key_vault_certificate.apim["gateway"].secret_id
-#       hostname    = local.gateway_hostname
-#       path        = "/status-0123456789abcdef"
-#       interval    = 30
-#       timeout     = 120
-#       threshold   = 8
-#     }
-#     portal = {
-#       hostname    = local.portal_hostname
-#       path        = "/internal-status-0123456789abcdef"
-#       interval    = 60
-#       timeout     = 300
-#       threshold   = 8
-#     }
-#   }
-# }
-
 locals {
   backend_address_pool_name      = "aks"
   frontend_port_name             = "https"
