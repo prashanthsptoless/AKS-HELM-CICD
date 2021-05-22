@@ -10,6 +10,6 @@ module "agw" {
   subnet_id               = azurerm_subnet.subnet["applicationgateway-subnet"].id
 
   backend_pool_ip_addresses = [
-    cidrhost(azurerm_subnet.subnet["applicationgateway-subnet"].address_prefixes.0, 250)
+    cidrhost(azurerm_subnet.subnet["aks-subnet"].address_prefixes.0, 250)
   ]
 }
