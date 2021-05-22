@@ -47,47 +47,8 @@ stages:
       environment: kubernetes-dev.apps
       kubernetesCluster: aks-boss-crawdad-dev
 
-  - stage:
-    displayName: Deploy to PROD
-    jobs:
-      - deployment: Prod
-        displayName: Deploy to Prod Environment
-        variables:
-          aksHostProd: boss-crawdad-prd.$(aksHost)
-        pool:
-          vmImage: 'ubuntu-latest'
-        environment: kubernetes-prd.apps
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: none
-
-                - task: HelmInstaller@1
-                  displayName: 'Install Helm'
-                  inputs:
-                    helmVersionToInstall: 'latest'
-
-                - task: AzureCLI@2
-                  displayName: 'Add ACR to Helm Repository list'
-                  inputs:
-                    azureSubscription: 'Azure'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(CONTAINER_REGISTRY_NAME)'
-                    failOnStandardError: true
-
-                - task: HelmDeploy@0
-                  displayName: 'Helm Deploy'
-                  inputs:
-                    connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'Azure'
-                    azureResourceGroup: 'rg-boss-crawdad'
-                    kubernetesCluster: 'aks-boss-crawdad-prd'
-                    useClusterAdmin: true
-                    namespace: 'apps'
-                    command: 'upgrade'
-                    chartType: 'Name'
-                    chartName: '$(CONTAINER_REGISTRY_NAME)/$(containerRepository)'
-                    releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(imageTag),image.repository=$(CONTAINER_REGISTRY_NAME).azurecr.io/$(containerRepository)'
+  - template: '../pipeline-templates/parrot-deployment.yml'
+    parameters:
+      baseDomain: boss-crawdad-prd.$(aksHost)
+      environment: kubernetes-prd.apps
+      kubernetesCluster: aks-boss-crawdad-prd
