@@ -10,13 +10,20 @@ resource "helm_release" "nginx_ingress" {
   }
 
   set {
+    name  = "controller.service.externalTrafficPolicy"
+    value = "Local"
+  }
+
+  set {
     name  = "controller.service.ports.https"
     value = "443"
   }
 
   set {
-    name  = "controller.service.annotations.service.beta.kubernetes.io/azure-load-balancer-internal"
-    value = "true"
+    name = "controller.service.annotations"
+    value = yamlencode({
+      "service.beta.kubernetes.io/azure-load-balancer-internal" = true
+    })
   }
 
   set {
