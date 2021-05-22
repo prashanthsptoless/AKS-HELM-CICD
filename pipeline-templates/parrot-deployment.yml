@@ -1,0 +1,83 @@
+parameters:
+- name: baseDomain 
+  type: string
+- name: environment
+  type: string
+- name: kubernetesCluster
+  type: string
+
+stages:
+  - stage:
+    displayName: Helm Deploy
+    jobs:
+      - deployment: 
+        displayName: Kubernetes Deployment
+        pool:
+          vmImage: 'ubuntu-latest'
+        environment: ${{ parameters.environment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: HelmInstaller@1
+                  displayName: 'Install Helm'
+                  inputs:
+                    helmVersionToInstall: 'latest'
+
+                - task: AzureCLI@2
+                  displayName: 'Prepare Deployment'
+                  env:
+                    AKS_RG: $(AZURE_ENV_RG)
+                    REGISTRY_SERVER: $(LOGIN_SERVER)
+                    CHART_PATH: $(local_chart_path)
+                  inputs:
+                    addSpnToEnvironment: true
+                    azureSubscription: 'Azure'
+                    failOnStandardError: true
+                    scriptLocation: 'inlineScript'
+                    scriptType: 'bash'
+                    inlineScript: |
+                      set -euo pipefail
+
+                      helm version
+
+                      echo "Login to AKS"
+                      az aks get-credentials \
+                        --resource-group ${AKS_RG} \
+                        --name '${{ parameters.kubernetesCluster }}' \
+                        --admin \
+                        --overwrite-existing
+
+                      echo "Sanity Check"
+                      helm list -A
+
+                      echo "Registry Login"
+                      echo $servicePrincipalKey | \
+                        helm registry login ${REGISTRY_SERVER} \
+                          --username $servicePrincipalId \
+                          --password-stdin
+
+                      echo "Retrieve Artifact"
+                      helm chart pull $(artifact)
+
+                      echo "Unpack Artifact"
+                      helm chart export "$(artifact)" --destination ./${CHART_PATH}
+
+                      echo "Sanity Check"
+                      helm show chart ./${CHART_PATH}/$(containerRepository)
+
+                - task: HelmDeploy@0
+                  inputs:
+                    connectionType: 'Azure Resource Manager'
+                    azureSubscription: 'Azure'
+                    azureResourceGroup: $(AZURE_ENV_RG)
+                    kubernetesCluster: '${{ parameters.kubernetesCluster }}'
+                    useClusterAdmin: true
+                    namespace: 'apps'
+                    command: 'upgrade'
+                    chartType: 'FilePath'
+                    chartPath: './$(local_chart_path)/$(containerRepository)'
+                    releaseName: '$(containerRepository)'
+                    overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
