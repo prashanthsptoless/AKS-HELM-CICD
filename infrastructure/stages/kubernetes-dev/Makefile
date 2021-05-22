@@ -18,6 +18,7 @@ validate:
 config:
 	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
 	@echo 'aks_cluster_name="aks-boss-crawdad-dev"' >> terraform.auto.tfvars
+	@echo 'aks_vnet_name="vnet-aks-boss-crawdad-dev"' >> terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan
