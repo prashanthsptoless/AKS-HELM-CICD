@@ -58,6 +58,7 @@ stages:
                   -input=false \
                   -var="resource_group_name=${AZURE_ENV_RG}" \
                   -var="aks_cluster_name=aks-boss-crawdad-dev" \
+                  -var="aks_vnet_name=vnet-aks-boss-crawdad-dev" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
 
           - template: '../pipeline-templates/publish-plan.yml'
