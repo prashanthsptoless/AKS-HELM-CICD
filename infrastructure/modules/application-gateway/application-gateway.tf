@@ -109,6 +109,8 @@ resource "azurerm_application_gateway" "agw" {
     rule_set_type    = "OWASP"
     rule_set_version = "3.1"
   }
+
+  zones=[1,2,3]
 }
 
 
