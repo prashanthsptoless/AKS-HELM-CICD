@@ -41,6 +41,16 @@ variable "resource_group" {
   })
 }
 
+variable "configuration_resource_group" {
+  description = "(Required) The module will read configuration data from this resource group."
+  type = object({
+    id       = string
+    name     = string
+    location = string
+    tags     = map(string)
+  })
+}
+
 variable "subnet_id" {
   description = "(Required) The subnet id for the application gateway."
   type        = string

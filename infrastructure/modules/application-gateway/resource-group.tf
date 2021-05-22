@@ -2,5 +2,5 @@
 resource "azurerm_role_assignment" "keyvault_secrets_user" {
   principal_id         = azurerm_user_assigned_identity.agw.principal_id
   role_definition_name = "Key Vault Secrets User"
-  scope                = var.resource_group.id
+  scope                = var.configuration_resource_group.id
 }

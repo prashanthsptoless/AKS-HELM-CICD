@@ -1,4 +1,8 @@
 resource "azurerm_application_gateway" "agw" {
+  depends_on = [
+    azurerm_role_assignment.keyvault_secrets_user
+  ]
+
   location            = var.resource_group.location
   name                = local.agw_name
   resource_group_name = var.resource_group.name
@@ -110,7 +114,7 @@ resource "azurerm_application_gateway" "agw" {
     rule_set_version = "3.1"
   }
 
-  zones=[1,2,3]
+  zones = [1, 2, 3]
 }
 
 
