@@ -5,7 +5,7 @@ resource "helm_release" "nginx_ingress" {
   repository = "https://kubernetes.github.io/ingress-nginx"
 
   set {
-    name  = "kind"
+    name  = "controller.kind"
     value = "DaemonSet"
   }
 
