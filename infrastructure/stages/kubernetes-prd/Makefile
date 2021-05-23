@@ -18,6 +18,9 @@ validate:
 config:
 	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
 	@echo 'aks_cluster_name="aks-boss-crawdad-prd"' >> terraform.auto.tfvars
+	@echo 'aks_vnet_name="vnet-aks-boss-crawdad-prd"' >> terraform.auto.tfvars
+	@echo 'backend_resource_group_name="rg-backend-engaged-emu"' >> terraform.auto.tfvars
+	@echo 'configuration_keyvault_name="kv-engaged-emu"' >> terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan
