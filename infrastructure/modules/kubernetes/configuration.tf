@@ -7,7 +7,7 @@ data "azurerm_key_vault" "config" {
   resource_group_name = var.backend_resource_group_name
 }
 
-data "azurerm_key_vault_secret" "tls" {
+data "azurerm_key_vault_certificate_data" "tls" {
   key_vault_id = data.azurerm_key_vault.config.id
   name         = var.certificate_name
 }
