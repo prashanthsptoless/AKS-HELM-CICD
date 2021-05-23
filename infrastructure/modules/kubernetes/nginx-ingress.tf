@@ -3,6 +3,7 @@ resource "helm_release" "nginx_ingress" {
   name       = "gateway"
   namespace  = kubernetes_namespace.apps.metadata.0.name
   repository = "https://kubernetes.github.io/ingress-nginx"
+  reuse_values = true
 
   set {
     name  = "controller.extraArgs.default-ssl-certificate"
