@@ -1,5 +1,6 @@
 variables:
   - group: azure-env
+  - group: key-vault
   - group: terraform-backend
   - group: terraform-version
   - name: tf_in_automation

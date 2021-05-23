@@ -59,6 +59,8 @@ stages:
                   -var="resource_group_name=${AZURE_ENV_RG}" \
                   -var="aks_cluster_name=aks-boss-crawdad-dev" \
                   -var="aks_vnet_name=vnet-aks-boss-crawdad-dev" \
+                  -var "backend_resource_group_name=${KEYVAULT_RESOURCE_GROUP_NAME}" \
+                  -var "configuration_keyvault_name=${KEYVAULT_NAME}" \
                   -out ${BUILD_BUILDNUMBER}.tfplan
 
           - template: '../pipeline-templates/publish-plan.yml'
