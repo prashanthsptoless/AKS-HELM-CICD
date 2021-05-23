@@ -12,7 +12,7 @@ data "azurerm_key_vault_certificate_data" "tls" {
   name         = var.certificate_name
 }
 
-data "azurerm_key_vault_secret" "certificate_data" {
+data "azurerm_key_vault_secret" "tls" {
   key_vault_id = data.azurerm_key_vault.config.id
   name         = var.certificate_name
 }
