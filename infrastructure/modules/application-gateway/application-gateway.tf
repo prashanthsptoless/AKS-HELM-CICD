@@ -23,9 +23,9 @@ resource "azurerm_application_gateway" "agw" {
     name                  = "https"
     path                  = "/"
     port                  = 443
-    #   probe_name            = backend_http_settings.key
-    protocol        = "Https"
-    request_timeout = 180
+    probe_name            = "https"
+    protocol              = "Https"
+    request_timeout       = 180
   }
 
   frontend_ip_configuration {
@@ -69,6 +69,16 @@ resource "azurerm_application_gateway" "agw" {
   identity {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.agw.id]
+  }
+
+  probe {
+    host                = var.hostname
+    interval            = 30
+    name                = "https"
+    path                = "/"
+    protocol            = "Https"
+    timeout             = 1
+    unhealthy_threshold = 3
   }
 
   request_routing_rule {
@@ -133,19 +143,7 @@ resource "azurerm_application_gateway" "agw" {
 #     azurerm_role_assignment.keyvault_secrets_user
 #   ]
 
-#   #   dynamic "probe" {
-#   #     for_each = local.agw_listeners
 
-#   #     content {
-#   #       host                = probe.value.hostname
-#   #       interval            = probe.value.interval
-#   #       name                = probe.key
-#   #       path                = probe.value.path
-#   #       protocol            = "Https"
-#   #       timeout             = probe.value.timeout
-#   #       unhealthy_threshold = probe.value.threshold
-#   #     }
-#   #   }
 
 # }
 
