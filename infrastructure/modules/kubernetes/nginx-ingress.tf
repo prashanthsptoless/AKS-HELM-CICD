@@ -7,7 +7,7 @@ resource "helm_release" "nginx_ingress" {
 
   set {
     name  = "controller.extraArgs.default-ssl-certificate"
-    value = "${kubernetes_namespace.apps.metadata.0.name}/${kubernetes_secret.tls.metadata.0.name}"
+    value = "${kubernetes_secret.tls.metadata.0.namespace}/${kubernetes_secret.tls.metadata.0.name}"
   }
 
   set {
