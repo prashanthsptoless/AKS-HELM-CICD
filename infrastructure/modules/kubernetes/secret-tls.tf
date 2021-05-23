@@ -10,7 +10,7 @@ resource "kubernetes_secret" "tls" {
     namespace = kubernetes_namespace.apps.metadata.0.name
   }
 
-  binary_data = {
+  data = {
     "tls.crt" = local.tls_data
     "tls.key" = local.tls_data
   }
