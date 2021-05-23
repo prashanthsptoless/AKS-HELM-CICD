@@ -37,7 +37,9 @@ pem_prd:
 upload: upload_dev upload_prd
 
 upload_dev:
-	bash ./upload-cert.sh $(dev) $(kv)
+	bash ./upload-pfx-cert.sh $(dev) $(kv)
+	bash ./upload-pem-cert.sh $(dev) $(kv)
 
 upload_prd:
-	bash ./upload-cert.sh $(prd) $(kv)
+	bash ./upload-pfx-cert.sh $(prd) $(kv)
+	bash ./upload-pem-cert.sh $(prd) $(kv)
