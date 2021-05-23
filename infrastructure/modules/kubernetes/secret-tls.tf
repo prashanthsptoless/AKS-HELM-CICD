@@ -1,3 +1,7 @@
+locals {
+  tls_data = base64encode(data.azurerm_key_vault_secret.certificate_data.value)
+}
+
 resource "kubernetes_secret" "tls" {
   type = "kubernetes.io/tls"
 
@@ -7,7 +11,7 @@ resource "kubernetes_secret" "tls" {
   }
 
   data = {
-    "tls.crt" = base64decode(data.azurerm_key_vault_secret.certificate_data.value)
-    "tls.key" = base64decode(data.azurerm_key_vault_secret.certificate_data.value)
+    "tls.crt" = local.tls_data
+    "tls.key" = local.tls_data
   }
 }
