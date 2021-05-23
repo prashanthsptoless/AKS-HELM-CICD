@@ -17,9 +17,12 @@ certbot certonly \
     --dns-route53 \
     -d ${DOMAIN}
 
-# PFX
-openssl pkcs12 \
-    -export \
-    -inkey ~/certbot/config/live/${DOMAIN}/privkey.pem \
-    -in ~/certbot/config/live/${DOMAIN}/cert.pem \
-    -out ~/certbot/certs/${DOMAIN}.pfx
+# # PFX
+# openssl pkcs12 \
+#     -export \
+#     -inkey ~/certbot/config/live/${DOMAIN}/privkey.pem \
+#     -in ~/certbot/config/live/${DOMAIN}/cert.pem \
+#     -out ~/certbot/certs/${DOMAIN}.pfx
+
+# PEM
+cat ~/certbot/config/live/${DOMAIN}/privkey.pem ~/certbot/config/live/${DOMAIN}/fullchain.pem > ~/certbot/certs/${DOMAIN}.pem
