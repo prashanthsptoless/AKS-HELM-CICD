@@ -1,0 +1,53 @@
+parameters:
+- name: projectFolder 
+  type: string
+- name: stateBlobName
+  type: string
+- name: kubernetesCluster
+  type: string
+
+stages:
+  - stage: 
+    displayName: 'Plan ${{ parameters.kubernetesCluster }} Infrastructure'
+    variables:
+      - name: TF_STORAGE_BLOB_NAME
+        value: ${{ parameters.stateBlobName }}
+    jobs:
+      - job: plan
+        displayName: 'Infrastructure Plan'
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - template: '../pipeline-templates/prepare-credentials.yml'
+          - template: '../pipeline-templates/pin-terraform.yml'
+          - template: '../pipeline-templates/terraform-init.yml'
+
+          - task: Bash@3
+            name: 'terraform_plan'
+            displayName: 'Terraform Plan'
+            env:
+              ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
+            inputs:
+              targetType: 'inline'
+              workingDirectory: ${{ parameters.projectFolder }}
+              script: |
+                set -euo pipefail
+
+                if [ ${BUILD_REASON} == 'PullRequest' ]; then
+                  export TF_CLI_ARGS="-lock=false"
+                fi
+
+                terraform plan \
+                  -input=false \
+                  -var="resource_group_name=${AZURE_ENV_RG}" \
+                  -var="aks_cluster_name=${{ parameters.kubernetesCluster }}" \
+                  -var="aks_vnet_name=vnet-${{ parameters.kubernetesCluster }}" \
+                  -var "backend_resource_group_name=${KEYVAULT_RESOURCE_GROUP_NAME}" \
+                  -var "configuration_keyvault_name=${KEYVAULT_NAME}" \
+                  -out ${BUILD_BUILDNUMBER}.tfplan
+
+          - template: '../pipeline-templates/publish-plan.yml'
