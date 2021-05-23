@@ -1,7 +1,3 @@
-locals {
-  tls_data = data.azurerm_key_vault_certificate_data.tls.pem
-}
-
 resource "kubernetes_secret" "tls" {
   type = "kubernetes.io/tls"
 
@@ -11,7 +7,7 @@ resource "kubernetes_secret" "tls" {
   }
 
   data = {
-    "tls.crt" = local.tls_data
-    "tls.key" = local.tls_data
+    "tls.crt" = data.azurerm_key_vault_certificate_data.tls.pem
+    "tls.key" = data.azurerm_key_vault_certificate_data.tls.key
   }
 }
