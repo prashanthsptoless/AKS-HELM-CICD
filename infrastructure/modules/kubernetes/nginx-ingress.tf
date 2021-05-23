@@ -5,8 +5,18 @@ resource "helm_release" "nginx_ingress" {
   repository = "https://kubernetes.github.io/ingress-nginx"
 
   set {
+    name  = "controller.extraArgs.default-ssl-certificate"
+    value = "${kubernetes_namespace.apps.metadata.0.name}/${kubernetes_secret.tls.metadata.0.name}"
+  }
+
+  set {
     name  = "controller.kind"
     value = "DaemonSet"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
+    value = "true"
   }
 
   set {
@@ -15,16 +25,8 @@ resource "helm_release" "nginx_ingress" {
   }
 
   set {
-    name  = "controller.service.ports.https"
-    value = "443"
-  }
-  set {
     name  = "controller.service.enableHttp"
     value = "false"
-  }
-  set {
-    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
-    value = "true"
   }
 
   set {
@@ -33,7 +35,7 @@ resource "helm_release" "nginx_ingress" {
   }
 
   set {
-    name  = "controller.extraArgs.default-ssl-certificate"
-    value = "${kubernetes_namespace.apps.metadata.0.name}/${kubernetes_secret.tls.metadata.0.name}"
+    name  = "controller.service.ports.https"
+    value = "443"
   }
 }
