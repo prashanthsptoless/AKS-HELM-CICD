@@ -18,7 +18,10 @@ resource "helm_release" "nginx_ingress" {
     name  = "controller.service.ports.https"
     value = "443"
   }
-
+  set {
+    name  = "controller.service.enableHttp"
+    value = "false"
+  }
   set {
     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
     value = "true"
@@ -27,5 +30,10 @@ resource "helm_release" "nginx_ingress" {
   set {
     name  = "controller.service.loadBalancerIP"
     value = cidrhost(var.aks_subnet_cidr, 250)
+  }
+
+  set {
+    name  = "controller.extraArgs.default-ssl-certificate"
+    value = "${kubernetes_namespace.apps.metadata.0.name}/${kubernetes_secret.tls.metadata.0.name}"
   }
 }
