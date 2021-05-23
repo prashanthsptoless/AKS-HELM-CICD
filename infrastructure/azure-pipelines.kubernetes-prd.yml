@@ -15,19 +15,18 @@ pr:
 
 variables:
   - template: '../pipeline-templates/infrastructure-variables.yml'
+  - name: project_folder
+    value: infrastructure/stages/kubernetes-prd
 
 stages:
   - template: '../pipeline-templates/kubernetes-plan.yml'
     parameters:
-      projectFolder: infrastructure/stages/kubernetes-prd
+      projectFolder: $(project_folder)
       stateBlobName: kubernetes-prd.terraform.tfstate
       kubernetesCluster: aks-boss-crawdad-prd
 
   - stage: deploy_kubernetes_prd
     displayName: 'Deploy Kubernetes Prd'
-    variables:
-      - name: project_folder
-        value: infrastructure/stages/kubernetes-prd
     jobs:
       - deployment: terraform
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
