@@ -7,7 +7,7 @@ resource "kubernetes_secret" "tls" {
   }
 
   data = {
-    "tls.crt" = data.azurerm_key_vault_secret.certificate_data.value
-    "tls.key" = data.azurerm_key_vault_secret.certificate_data.value
+    "tls.crt" = base64decode(data.azurerm_key_vault_secret.certificate_data.value)
+    "tls.key" = base64decode(data.azurerm_key_vault_secret.certificate_data.value)
   }
 }
