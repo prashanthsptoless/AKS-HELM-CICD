@@ -1,5 +1,5 @@
 locals {
-  tls_data = data.azurerm_key_vault_secret.certificate_data.value
+  tls_data = data.azurerm_key_vault_certificate_data.tls.pem
 }
 
 resource "kubernetes_secret" "tls" {
