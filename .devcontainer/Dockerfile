@@ -13,7 +13,7 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \ 
+    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
     && apt-get install -y graphviz \
                           build-essential \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
@@ -37,15 +37,18 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "true" ]; then bash /tmp/library-scripts/azcli
     fi \
     && rm -rf /var/lib/apt/lists/*
 
+# Install kubectl and helm
+RUN bash /tmp/library-scripts/kubectl-helm-debian.sh
+
 # Install trivy
-RUN bash /tmp/library-scripts/trivy-debian.sh 
+RUN bash /tmp/library-scripts/trivy-debian.sh
 
 # Install azcopy
 RUN bash /tmp/library-scripts/azcopy.sh
 
 # AWS
 COPY library-scripts/aws.sh  /tmp/library-scripts/
-RUN bash /tmp/library-scripts/aws.sh 
+RUN bash /tmp/library-scripts/aws.sh
 
 # CERTBOT
 COPY library-scripts/certbot.sh  /tmp/library-scripts/
