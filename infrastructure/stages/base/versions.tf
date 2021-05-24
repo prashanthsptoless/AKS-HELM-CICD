@@ -3,6 +3,10 @@ terraform {
   backend "azurerm" {}
 
   required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3"
+    }
     azuread = {
       source  = "hashicorp/azuread"
       version = "~> 1.4"
@@ -20,4 +24,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+}
+
+provider "aws" {
+  region = "us-west-2"
 }
