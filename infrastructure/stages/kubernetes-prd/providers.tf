@@ -16,4 +16,4 @@ provider "helm" {
     client_key             = base64decode(local.kube_config["client_key"])
     cluster_ca_certificate = base64decode(local.kube_config["cluster_ca_certificate"])
   }
-}l;;l,,.
+}

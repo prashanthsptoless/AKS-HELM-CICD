@@ -8,7 +8,7 @@ parameters:
 
 stages:
   - stage: 
-    displayName: "Plan ${{ parameters.kubernetesCluster }} Infrastructure"
+    displayName: "Plan Kubernetes Infrastructure"
     variables:
       - name: TF_STORAGE_BLOB_NAME
         value: ${{ parameters.stateBlobName }}
