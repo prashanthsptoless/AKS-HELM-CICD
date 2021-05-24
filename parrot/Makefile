@@ -22,3 +22,6 @@ scan:
 clean:
 	rm -rf ./src/parrot/node_modules
 	rm -rf ./src/parrot/out
+
+chart: 
+	helm lint src/parrot/charts/parrot --strict
