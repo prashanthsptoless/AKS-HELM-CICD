@@ -7,6 +7,7 @@ resource "azurerm_application_gateway" "agw" {
   name                = local.agw_name
   resource_group_name = var.resource_group.name
   tags                = var.resource_group.tags
+  zones               = [1, 2, 3]
 
   autoscale_configuration {
     min_capacity = 0
@@ -123,27 +124,4 @@ resource "azurerm_application_gateway" "agw" {
     rule_set_type    = "OWASP"
     rule_set_version = "3.1"
   }
-
-  zones = [1, 2, 3]
 }
-
-
-# locals {
-
-#   agw_listeners = {
-#     aks = {
-#       certificate = azurerm_key_vault_certificate.cert.secret_id
-#       hostname    = local.hostname
-#     }
-#   }
-# }
-
-# resource "azurerm_application_gateway" "agw" {
-#   depends_on = [
-#     azurerm_role_assignment.keyvault_secrets_user
-#   ]
-
-
-
-# }
-
