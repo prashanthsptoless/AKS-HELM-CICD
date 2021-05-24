@@ -8,7 +8,7 @@ steps:
       ARM_TENANT_ID: $(AZURE_TENANT_ID)
     inputs:
       targetType: 'inline'
-      workingDirectory: $(project_folder)
+      workingDirectory: $(projectFolder)
       script: |
         set -euo pipefail
         

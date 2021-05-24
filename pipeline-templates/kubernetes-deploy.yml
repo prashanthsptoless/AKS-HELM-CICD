@@ -1,0 +1,40 @@
+parameters:
+- name: environment
+  type: string
+- name: projectFolder 
+  type: string
+- name: kubernetesCluster
+  type: string
+
+stages:
+  - stage: 
+    displayName: 'Deploy ${{ parameters.environment }}'
+    jobs:
+      - deployment: terraform
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+        displayName: 'Change Infrastructure'
+        environment: ${{ parameters.environment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: '../pipeline-templates/extract-plan.yml'
+                - template: '../pipeline-templates/prepare-credentials.yml'
+                - template: '../pipeline-templates/pin-terraform.yml'
+
+                - task: Bash@3
+                  displayName: 'Terraform Apply'
+                  env:
+                    ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+                    ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                    ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    ARM_TENANT_ID: $(AZURE_TENANT_ID)
+                  inputs:
+                    targetType: 'inline'
+                    workingDirectory: ${{ parameters.projectFolder }}
+                    script: |
+                      set -euo pipefail
+      
+                      terraform apply \
+                        -input=false \
+                        ${BUILD_BUILDNUMBER}.tfplan

@@ -8,7 +8,7 @@ steps:
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     displayName: 'Create Plan Artifact'
     inputs:
-      rootFolderOrFile: '$(project_folder)'
+      rootFolderOrFile: '$(projectFolder)'
       includeRootFolder: false
       archiveType: 'tar'
       tarCompression: 'gz'

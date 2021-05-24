@@ -8,5 +8,5 @@ steps:
     displayName: 'Extract Plan Artifact'
     inputs:
       archiveFilePatterns: '$(Pipeline.Workspace)/${{ parameters.artifactName }}/$(Build.BuildNumber).tgz'
-      destinationFolder: '$(project_folder)/'
+      destinationFolder: '$(projectFolder)/'
       cleanDestinationFolder: true
