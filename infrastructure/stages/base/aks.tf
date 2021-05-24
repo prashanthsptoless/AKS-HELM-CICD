@@ -12,7 +12,7 @@ module "aks_dev" {
 module "aks_prd" {
   source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureaiconf.6.21"
 
-  cert_secret_id               = data.azurerm_key_vault_certificate.certificate["dev"].secret_id
+  cert_secret_id               = data.azurerm_key_vault_certificate.certificate["prd"].secret_id
   environment                  = "prd"
   instance_id                  = local.instance_id
   log_analytics_workspace      = azurerm_log_analytics_workspace.main
