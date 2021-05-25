@@ -9,6 +9,11 @@ parameters:
 
 stages:
   - stage:
+    variables:
+    ${{ if parameters.baseDomain }}:
+      overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
+    ${{ if not(parameters.baseDomain) }}:
+      overrideValues: 'image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
     displayName: Helm Deploy
     jobs:
       - deployment: 
@@ -81,7 +86,4 @@ stages:
                     chartType: 'FilePath'
                     chartPath: './$(local_chart_path)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                  ${{ if parameters.baseDomain }}:
-                    overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
-                  ${{ if not(parameters.baseDomain) }}:
-                    overrideValues: 'image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
+                    overrideValues: $(overrideValues)
