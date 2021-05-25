@@ -41,21 +41,24 @@ variables:
     value: "$(containerRepository)-$(chartTag)"
 
 stages:
-  - template: '../pipeline-templates/parrot-deployment.yml'
-    parameters:
-      baseDomain: boss-crawdad-dev.$(aksHost)
-      environment: kubernetes-dev.apps
-      kubernetesCluster: aks-boss-crawdad-dev
+  # - template: '../pipeline-templates/parrot-deployment.yml'
+  #   parameters:
+  #     baseDomain: boss-crawdad-dev.$(aksHost)
+  #     environment: kubernetes-dev.apps
+  #     kubernetesCluster: aks-boss-crawdad-dev
 
-  - template: '../pipeline-templates/parrot-deployment.yml'
-    parameters:
-      baseDomain: boss-crawdad-prd.$(aksHost)
-      environment: kubernetes-prd.apps
-      kubernetesCluster: aks-boss-crawdad-prd
+  # - template: '../pipeline-templates/parrot-deployment.yml'
+  #   parameters:
+  #     baseDomain: boss-crawdad-prd.$(aksHost)
+  #     environment: kubernetes-prd.apps
+  #     kubernetesCluster: aks-boss-crawdad-prd
 
 
   - stage:
     displayName: Deploy to DEV
+    variables:
+      - name: kubernetesCluster
+        value: aks-boss-crawdad-dev
     jobs:
       - deployment: Dev
         displayName: Deploy to Dev Environment
@@ -93,7 +96,7 @@ stages:
                       echo "Login to AKS"
                       az aks get-credentials \
                         --resource-group ${AKS_RG} \
-                        --name '${{ parameters.kubernetesCluster }}' \
+                        --name $(kubernetesCluster) \
                         --admin \
                         --overwrite-existing
 
@@ -120,14 +123,14 @@ stages:
                     connectionType: 'Azure Resource Manager'
                     azureSubscription: 'Azure'
                     azureResourceGroup: $(AZURE_ENV_RG)
-                    kubernetesCluster: '${{ parameters.kubernetesCluster }}'
+                    kubernetesCluster: $(kubernetesCluster)
                     useClusterAdmin: true
                     namespace: 'apps'
                     command: 'upgrade'
                     chartType: 'FilePath'
                     chartPath: './$(local_chart_path)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
+                    overrideValues: 'image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
 
   # - stage:
   #   displayName: Deploy to PROD
