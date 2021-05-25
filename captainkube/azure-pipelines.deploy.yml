@@ -129,57 +129,57 @@ stages:
                     releaseName: '$(containerRepository)'
                     overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
 
-  - stage:
-    displayName: Deploy to PROD
-    jobs:
-      - deployment: Prod
-        displayName: Deploy to Prod Environment
-        pool:
-          vmImage: 'ubuntu-latest'
-        environment: prod.apps
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: none
+  # - stage:
+  #   displayName: Deploy to PROD
+  #   jobs:
+  #     - deployment: Prod
+  #       displayName: Deploy to Prod Environment
+  #       pool:
+  #         vmImage: 'ubuntu-latest'
+  #       environment: prod.apps
+  #       strategy:
+  #         runOnce:
+  #           deploy:
+  #             steps:
+  #               - checkout: none
 
-                - task: HelmInstaller@1
-                  displayName: 'Install Helm'
-                  inputs:
-                    helmVersionToInstall: '$(helmVersion)'
+  #               - task: HelmInstaller@1
+  #                 displayName: 'Install Helm'
+  #                 inputs:
+  #                   helmVersionToInstall: '$(helmVersion)'
 
-                - task: HelmDeploy@0
-                  displayName: 'Initialize Helm'
-                  inputs:
-                    connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'prod-container-demo'
-                    useClusterAdmin: true
-                    command: 'init'
-                    arguments: '--service-account tiller --force-upgrade'
+  #               - task: HelmDeploy@0
+  #                 displayName: 'Initialize Helm'
+  #                 inputs:
+  #                   connectionType: 'Azure Resource Manager'
+  #                   azureSubscription: 'AzureMSDN'
+  #                   azureResourceGroup: 'container-pipelines-demo'
+  #                   kubernetesCluster: 'prod-container-demo'
+  #                   useClusterAdmin: true
+  #                   command: 'init'
+  #                   arguments: '--service-account tiller --force-upgrade'
 
-                - task: AzureCLI@2
-                  displayName: 'Add ACR to Helm Repository list'
-                  inputs:
-                    azureSubscription: 'AzureMSDN'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(registryName)'
-                    failOnStandardError: true
+  #               - task: AzureCLI@2
+  #                 displayName: 'Add ACR to Helm Repository list'
+  #                 inputs:
+  #                   azureSubscription: 'AzureMSDN'
+  #                   scriptType: 'bash'
+  #                   scriptLocation: 'inlineScript'
+  #                   inlineScript: 'az acr helm repo add --name $(registryName)'
+  #                   failOnStandardError: true
 
-                - task: HelmDeploy@0
-                  displayName: 'Helm Deploy'
-                  inputs:
-                    connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'prod-container-demo'
-                    useClusterAdmin: true
-                    namespace: 'apps'
-                    command: 'upgrade'
-                    chartType: 'Name'
-                    chartName: '$(registryName)/$(imageName)'
-                    releaseName: '$(imageName)'
-                    overrideValues: 'image.tag=$(Build.BuildNumber),image.repository=$(registryName).azurecr.io/$(imageName)'
-                    force: true
+  #               - task: HelmDeploy@0
+  #                 displayName: 'Helm Deploy'
+  #                 inputs:
+  #                   connectionType: 'Azure Resource Manager'
+  #                   azureSubscription: 'AzureMSDN'
+  #                   azureResourceGroup: 'container-pipelines-demo'
+  #                   kubernetesCluster: 'prod-container-demo'
+  #                   useClusterAdmin: true
+  #                   namespace: 'apps'
+  #                   command: 'upgrade'
+  #                   chartType: 'Name'
+  #                   chartName: '$(registryName)/$(imageName)'
+  #                   releaseName: '$(imageName)'
+  #                   overrideValues: 'image.tag=$(Build.BuildNumber),image.repository=$(registryName).azurecr.io/$(imageName)'
+  #                   force: true
