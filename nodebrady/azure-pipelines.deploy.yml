@@ -3,11 +3,11 @@ name: 0.2.$(Rev:r)
 resources:
   pipelines:
     - pipeline: build
-      source: 'captainkube-docker'
+      source: 'nodebrady-docker'
       trigger: true
       branch: azureaiconf.6.21
     - pipeline: helm
-      source: 'captainkube-chart'
+      source: 'nodebrady-chart'
       trigger: true
       branch: azureaiconf.6.21
 
@@ -15,7 +15,7 @@ trigger:
   batch: true
   paths:
     include:
-      - captainkube/azure-pipelines.deploy.yaml
+      - nodebrady/azure-pipelines.deploy.yaml
   branches:
     include:
       - main
@@ -24,7 +24,7 @@ variables:
   - group: acr
   - group: azure-env
   - name: containerRepository
-    value: captainkube
+    value: nodebrady
   - name: imageTag
     value: $(resources.pipeline.build.runName)
   - name: chartTag
