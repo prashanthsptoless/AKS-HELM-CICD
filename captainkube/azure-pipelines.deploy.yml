@@ -47,11 +47,7 @@ stages:
   #     environment: kubernetes-dev.apps
   #     kubernetesCluster: aks-boss-crawdad-dev
 
-  # - template: '../pipeline-templates/parrot-deployment.yml'
-  #   parameters:
-  #     baseDomain: boss-crawdad-prd.$(aksHost)
-  #     environment: kubernetes-prd.apps
-  #     kubernetesCluster: aks-boss-crawdad-prd
+
 
 
   - stage:
@@ -131,6 +127,12 @@ stages:
                     chartPath: './$(local_chart_path)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
                     overrideValues: 'image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
+
+  - template: '../pipeline-templates/parrot-deployment.yml'
+    parameters:
+      baseDomain: boss-crawdad-prd.$(aksHost)
+      environment: prd.apps
+      kubernetesCluster: aks-boss-crawdad-prd
 
   # - stage:
   #   displayName: Deploy to PROD
