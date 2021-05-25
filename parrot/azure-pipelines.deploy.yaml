@@ -41,13 +41,13 @@ variables:
     value: "$(containerRepository)-$(chartTag)"
 
 stages:
-  - template: '../pipeline-templates/parrot-deployment.yml'
+  - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
       baseDomain: boss-crawdad-dev.$(aksHost)
       environment: kubernetes-dev.apps
       kubernetesCluster: aks-boss-crawdad-dev
 
-  - template: '../pipeline-templates/parrot-deployment.yml'
+  - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
       baseDomain: boss-crawdad-prd.$(aksHost)
       environment: kubernetes-prd.apps
