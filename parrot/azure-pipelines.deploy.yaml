@@ -3,11 +3,11 @@ name: 0.2.$(Rev:r)
 resources:
   pipelines:
     - pipeline: build
-      source: 'parrot_docker'
+      source: 'parrot-docker'
       trigger: true
       branch: azureaiconf.6.21
     - pipeline: helm
-      source: 'parrot_helm'
+      source: 'parrot-helm'
       trigger: true
       branch: azureaiconf.6.21
 
@@ -44,11 +44,11 @@ stages:
   - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
       baseDomain: boss-crawdad-dev.$(aksHost)
-      environment: kubernetes-dev.apps
+      environment: dev.apps
       kubernetesCluster: aks-boss-crawdad-dev
 
   - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
       baseDomain: boss-crawdad-prd.$(aksHost)
-      environment: kubernetes-prd.apps
+      environment: prd.apps
       kubernetesCluster: aks-boss-crawdad-prd
