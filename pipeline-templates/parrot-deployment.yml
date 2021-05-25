@@ -1,6 +1,7 @@
 parameters:
 - name: baseDomain 
   type: string
+  default: ""
 - name: environment
   type: string
 - name: kubernetesCluster
@@ -80,4 +81,7 @@ stages:
                     chartType: 'FilePath'
                     chartPath: './$(local_chart_path)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
+                    ${{ if parameters.baseDomain }}:
                     overrideValues: 'ingress.basedomain=${{ parameters.basedomain }},image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
+                    ${{ if not(parameters.baseDomain) }}:
+                    overrideValues: 'image.tag=$(imageTag),image.repository=$(LOGIN_SERVER)/$(containerRepository)'
