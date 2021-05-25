@@ -15,7 +15,7 @@ variables:
   - name: containerRepository
     value: captainkube
   - name: chart_path
-    value: parrot/src/parrot/charts/parrot
+    value: captainkube/charts/captainkube
   - name: namespace
     value: charts
   - name: HELM_EXPERIMENTAL_OCI
