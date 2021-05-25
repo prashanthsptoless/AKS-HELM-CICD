@@ -1,0 +1,50 @@
+name: 0.2.$(Rev:r)
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: 'captainkube-docker'
+      trigger: true
+      branch: azureaiconf.6.21
+    - pipeline: helm
+      source: 'captainkube-chart'
+      trigger: true
+      branch: azureaiconf.6.21
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - captainkube/azure-pipelines.deploy.yaml
+  branches:
+    include:
+      - main
+
+variables:
+  - group: acr
+  - group: azure-env
+  - name: containerRepository
+    value: captainkube
+  - name: imageTag
+    value: $(resources.pipeline.build.runName)
+  - name: chartTag
+    value: $(resources.pipeline.helm.runName)
+  - name: HELM_EXPERIMENTAL_OCI
+    value: 1
+  - name: namespace
+    value: charts
+  - name: artifact
+    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(chartTag)"
+  - name: local_chart_path
+    value: "$(containerRepository)-$(chartTag)"
+
+stages:
+  - template: '../pipeline-templates/helm-deployment.yml'
+    parameters:
+      environment: dev.apps
+      kubernetesCluster: aks-boss-crawdad-dev
+
+  - template: '../pipeline-templates/helm-deployment.yml'
+    parameters:
+      environment: prd.apps
+      kubernetesCluster: aks-boss-crawdad-prd
