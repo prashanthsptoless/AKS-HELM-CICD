@@ -11,7 +11,7 @@ trigger:
       - parrot/azure-pipelines.docker.yml
   branches:
     include:
-      - master
+      - main
 
 variables:
   - group: acr
@@ -28,56 +28,3 @@ variables:
 
 stages:
   - template: '../pipeline-templates/helm-package.yml'
-
-  # - stage: Build
-  #   displayName: 'Package Helm Chart'
-  #   jobs:
-  #     - job: Helm
-  #       displayName: 'Build and Push Helm Chart'
-  #       pool:
-  #         vmImage: 'ubuntu-latest'
-
-  #       steps:
-  #         - checkout: self
-  #           fetchDepth: 1
-
-  #         - task: HelmInstaller@1
-  #           displayName: 'Initialize Helm'
-  #           inputs:
-  #             helmVersionToInstall: 'latest'
-
-  #         - task: Bash@3
-  #           displayName: 'Check Helm Chart'
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               set -euo pipefail
-
-  #               helm lint $(chart_path) --strict
-
-  #         - task: Bash@3
-  #           displayName: 'Save Helm Chart'
-  #           inputs:
-  #             targetType: 'inline'
-  #             script: |
-  #               set -euo pipefail
-
-  #               helm chart save $(chart_path) $(artifact)
-
-  #         - task: AzureCLI@2
-  #           condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  #           displayName: 'Push Helm Chart'
-  #           inputs:
-  #             addSpnToEnvironment: true
-  #             azureSubscription: 'Azure'
-  #             scriptLocation: 'inlineScript'
-  #             scriptType: 'bash'
-  #             inlineScript: |
-  #               set -euo pipefail
-
-  #               echo $servicePrincipalKey | \
-  #                 helm registry login $(LOGIN_SERVER) \
-  #                   --username $servicePrincipalId \
-  #                   --password-stdin
-
-  #               helm chart push $(artifact)
