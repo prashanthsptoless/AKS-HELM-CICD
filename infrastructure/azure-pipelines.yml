@@ -18,6 +18,7 @@ pool:
   
 variables:
   - template: '../pipeline-templates/infrastructure-variables.yml'
+  - group: aws
 
 
 stages:
@@ -37,17 +38,6 @@ stages:
           - template: '../pipeline-templates/prepare-credentials.yml'
           - template: '../pipeline-templates/pin-terraform.yml'
           - template: '../pipeline-templates/terraform-init.yml'
-
-          - task: AzureCLI@2
-            displayName: 'Download Certificates'
-            enabled: false
-            inputs:
-              arguments: '$(TF_STORAGE_ACCOUNT) certs'
-              azureSubscription: 'Azure'
-              scriptLocation: 'scriptPath'
-              scriptPath: '$(Build.SourcesDirectory)/infrastructure/scripts/download-certs.sh'
-              scriptType: 'bash'
-              workingDirectory: $(projectFolder)
 
           - task: Bash@3
             name: 'terraform_plan'
