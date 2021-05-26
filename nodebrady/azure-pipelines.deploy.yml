@@ -5,11 +5,11 @@ resources:
     - pipeline: build
       source: 'nodebrady-docker'
       trigger: true
-      branch: azureaiconf.6.21
+      branch: main
     - pipeline: helm
       source: 'nodebrady-chart'
       trigger: true
-      branch: azureaiconf.6.21
+      branch: main
 
 trigger:
   batch: true

@@ -5,11 +5,11 @@ resources:
     - pipeline: build
       source: 'captainkube-docker'
       trigger: true
-      branch: azureaiconf.6.21
+      branch: main
     - pipeline: helm
       source: 'captainkube-chart'
       trigger: true
-      branch: azureaiconf.6.21
+      branch: main
 
 trigger:
   batch: true
