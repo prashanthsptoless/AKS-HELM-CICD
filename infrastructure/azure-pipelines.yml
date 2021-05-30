@@ -5,7 +5,10 @@ trigger:
   branches:
     include:
       - main
-
+  paths:
+    include:
+      - infrastructure/stages/base
+      - infrastructure/azure-pipelines.yml
 pr:
   autoCancel: true
   drafts: true

@@ -5,6 +5,10 @@ trigger:
   branches:
     include:
       - main
+  paths:
+    include:
+      - infrastructure/stages/kubernetes-prd
+      - infrastructure/azure-pipelines.kubernetes-prd.yml
 
 pr:
   autoCancel: true
