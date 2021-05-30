@@ -1,4 +1,4 @@
-ARG VARIANT=5.0
+ARG VARIANT=3.1
 FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-${VARIANT}
 
 COPY library-scripts/*.sh /tmp/library-scripts/
@@ -13,7 +13,7 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \ 
+    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
     && apt-get install -y graphviz \
                           build-essential \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
@@ -37,6 +37,24 @@ RUN if [ "${INSTALL_AZURE_CLI}" = "true" ]; then bash /tmp/library-scripts/azcli
     fi \
     && rm -rf /var/lib/apt/lists/*
 
+# Install kubectl and helm
+RUN bash /tmp/library-scripts/kubectl-helm-debian.sh
+
+# Install trivy
+RUN bash /tmp/library-scripts/trivy-debian.sh
+
+# Install azcopy
+RUN bash /tmp/library-scripts/azcopy.sh
+
+# AWS
+COPY library-scripts/aws.sh  /tmp/library-scripts/
+RUN bash /tmp/library-scripts/aws.sh
+
+# CERTBOT
+COPY library-scripts/certbot.sh  /tmp/library-scripts/
+RUN bash /tmp/library-scripts/certbot.sh \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install Terraform, tflint, Terragrunt
 ARG TERRAFORM_VERSION=0.12.16
 ARG TFLINT_VERSION=0.8.2
@@ -44,10 +62,7 @@ ARG TERRAGRUNT_VERSION=0.28.1
 RUN bash /tmp/library-scripts/terraform-debian.sh "${TERRAFORM_VERSION}" "${TFLINT_VERSION}" "${TERRAGRUNT_VERSION}" \
     && rm -rf /tmp/library-scripts
 
-
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+

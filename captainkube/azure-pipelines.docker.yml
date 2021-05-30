@@ -1,0 +1,63 @@
+name: 0.1.$(Rev:r)
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - captainkube
+    exclude:
+      - 'captainkube/charts'
+      - 'captainkube/azure-pipelines.deploy.yaml'
+      - 'captainkube/azure-pipelines.helm.yaml'
+  branches:
+    include:
+      - main
+
+variables:
+  - group: acr
+  - name: containerRepository
+    value: captainkube
+
+stages:
+  - stage: Build
+    displayName: 'Build Docker Image'
+    jobs:
+      - job: Docker
+        displayName: 'Build and Push Docker Image'
+        pool:
+          vmImage: 'ubuntu-latest'
+
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: Docker@2
+            displayName: 'Build Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(containerRepository)'
+              command: 'build'
+              Dockerfile: 'captainkube/Dockerfile'
+              buildContext: 'captainkube'
+              tags: '$(Build.BuildNumber)'
+
+          - template: ../pipeline-templates/trivy-scan.yml
+            parameters:
+              imageName: $(LOGIN_SERVER)/$(containerRepository):$(Build.BuildNumber)
+              failTaskOnFailedScan: false
+
+          - task: Docker@2
+            displayName: 'Push Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(containerRepository)'
+              command: 'push'
+              tags: '$(Build.BuildNumber)'
+
+          - task: Docker@2
+            displayName: 'Push Docker Image'
+            inputs:
+              containerRegistry: 'ACR'
+              repository: '$(containerRepository)'
+              command: 'push'
+              tags: '$(Build.BuildNumber)'

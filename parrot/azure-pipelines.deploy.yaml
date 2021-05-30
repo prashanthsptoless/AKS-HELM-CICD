@@ -1,15 +1,15 @@
-name: 0.1.$(Rev:r)
+name: 0.2.$(Rev:r)
 
 resources:
   pipelines:
     - pipeline: build
-      source: 'lifecycle-demo-docker'
+      source: 'parrot-docker'
       trigger: true
-      branch: master
+      branch: main
     - pipeline: helm
-      source: 'lifecycle-demo-helm'
+      source: 'parrot-helm'
       trigger: true
-      branch: master
+      branch: main
 
 trigger:
   batch: true
@@ -18,103 +18,37 @@ trigger:
       - parrot/azure-pipelines.deploy.yaml
   branches:
     include:
-      - master
+      - main
 
 variables:
-  helmVersion: 3.0.2
-  aksHost: westus2.cloudapp.azure.com
-  containerRepository: parrot
-  containerRegistry: containerpipelinesdemoacr
-  imageTag: $(resources.pipeline.build.runName)
+  - group: acr
+  - group: azure-env
+  - name: containerRepository
+    value: parrot
+  - name: aksHost
+    value: jamesrcounts.com
+  - name: imageTag
+    value: $(resources.pipeline.build.runName)
+  - name: chartTag
+    value: $(resources.pipeline.helm.runName)
+  - name: HELM_EXPERIMENTAL_OCI
+    value: 1
+  - name: namespace
+    value: charts
+  - name: artifact
+    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(chartTag)"
+  - name: local_chart_path
+    value: "$(containerRepository)-$(chartTag)"
 
 stages:
-  - stage:
-    displayName: Deploy to DEV
-    variables:
-      aksHostDev: dev-container-demo.$(aksHost)
-    jobs:
-      - deployment: Dev
-        displayName: Deploy to Dev Environment
-        pool:
-          vmImage: 'ubuntu-latest'
-        environment: dev.apps
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: none
+  - template: '../pipeline-templates/helm-deployment.yml'
+    parameters:
+      baseDomain: boss-crawdad-dev.$(aksHost)
+      environment: dev.apps
+      kubernetesCluster: aks-boss-crawdad-dev
 
-                - task: HelmInstaller@1
-                  displayName: 'Install Helm'
-                  inputs:
-                    helmVersionToInstall: '$(helmVersion)'
-
-                - task: AzureCLI@2
-                  displayName: 'Add ACR to Helm Repository list'
-                  inputs:
-                    azureSubscription: 'AzureMSDN'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
-                    failOnStandardError: true
-
-                - task: HelmDeploy@0
-                  displayName: 'Helm Deploy'
-                  inputs:
-                    connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'dev-container-demo'
-                    useClusterAdmin: true
-                    namespace: 'apps'
-                    command: 'upgrade'
-                    chartType: 'Name'
-                    chartName: '$(containerRegistry)/$(containerRepository)'
-                    releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostDev),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
-
-
-  - stage:
-    displayName: Deploy to PROD
-    jobs:
-      - deployment: Prod
-        displayName: Deploy to Prod Environment
-        variables:
-          aksHostProd: prod-container-demo.$(aksHost)
-        pool:
-          vmImage: 'ubuntu-latest'
-        environment: prod.apps
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: none
-
-                - task: HelmInstaller@1
-                  displayName: 'Install Helm'
-                  inputs:
-                    helmVersionToInstall: '$(helmVersion)'
-
-                - task: AzureCLI@2
-                  displayName: 'Add ACR to Helm Repository list'
-                  inputs:
-                    azureSubscription: 'AzureMSDN'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: 'az acr helm repo add --name $(containerRegistry)'
-                    failOnStandardError: true
-
-                - task: HelmDeploy@0
-                  displayName: 'Helm Deploy'
-                  inputs:
-                    connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'AzureMSDN'
-                    azureResourceGroup: 'container-pipelines-demo'
-                    kubernetesCluster: 'prod-container-demo'
-                    useClusterAdmin: true
-                    namespace: 'apps'
-                    command: 'upgrade'
-                    chartType: 'Name'
-                    chartName: '$(containerRegistry)/$(containerRepository)'
-                    releaseName: '$(containerRepository)'
-                    overrideValues: 'ingress.basedomain=$(aksHostProd),image.tag=$(imageTag),image.repository=$(containerRegistry).azurecr.io/$(containerRepository)'
+  - template: '../pipeline-templates/helm-deployment.yml'
+    parameters:
+      baseDomain: boss-crawdad-prd.$(aksHost)
+      environment: prd.apps
+      kubernetesCluster: aks-boss-crawdad-prd

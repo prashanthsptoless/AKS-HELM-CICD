@@ -1,0 +1,34 @@
+name: 0.2.$(Rev:r)
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+pr:
+  autoCancel: true
+  drafts: true
+  branches:
+    include:
+      - main
+
+variables:
+  - template: '../pipeline-templates/infrastructure-variables.yml'
+  - name: projectFolder
+    value: infrastructure/stages/kubernetes-dev
+  - name: kubernetesCluster
+    value: aks-boss-crawdad-dev
+
+stages:
+  - template: '../pipeline-templates/kubernetes-plan.yml'
+    parameters:
+      projectFolder: $(projectFolder)
+      stateBlobName: kubernetes-dev.terraform.tfstate
+      kubernetesCluster: $(kubernetesCluster)
+
+  - template: '../pipeline-templates/kubernetes-deploy.yml'
+    parameters:
+      environment: kubernetes-dev
+      projectFolder: $(projectFolder)
+      kubernetesCluster: $(kubernetesCluster)

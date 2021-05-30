@@ -1,4 +1,4 @@
-name: 0.1.$(Rev:r)
+name: 0.2.$(Rev:r)
 
 trigger:
   batch: true
@@ -11,14 +11,20 @@ trigger:
       - 'parrot/azure-pipelines.helm.yaml'
   branches:
     include:
-      - master
+      - main
 
 variables:
-  helmVersion: 3.0.2
-  buildConfiguration: 'Release'
-  containerRepository: parrot
-  containerRegistry: containerpipelinesdemoacr
-  nuget_packages: $(Pipeline.Workspace)/.nuget/packages
+  - group: acr
+  - name: helmVersion
+    value: 3.5.4
+  - name: buildConfiguration
+    value: 'Release'
+  - name: containerRepository
+    value: parrot
+  - name: nuget_packages
+    value: $(Pipeline.Workspace)/.nuget/packages
+  - name: npm_config_cache
+    value: $(Pipeline.Workspace)/.npm
 
 stages:
   - stage: Build
@@ -33,17 +39,39 @@ stages:
           - checkout: self
             fetchDepth: 1
 
-          - task: CacheBeta@0
+          - task: Cache@2
             displayName: Cache NuGet packages
             inputs:
-              key: nuget | parrot/src/parrot/package-lock.json
+              key: 'nuget | "$(Agent.OS)" | $(Build.SourcesDirectory)/parrot/src/parrot/packages.lock.json'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
               path: $(nuget_packages)
 
+          - task: Cache@2
+            displayName: Cache npm
+            inputs:
+              key: 'npm | "$(Agent.OS)" | $(Build.SourcesDirectory)/parrot/src/parrot/package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: $(npm_config_cache)
+
           - task: UseDotNet@2
-            displayName: 'Use .NET Core SDK version 2.2.105'
+            displayName: 'Use .NET Core SDK version 3.1.408'
             inputs:
               packageType: 'sdk'
-              version: '2.2.105'
+              version: '3.1.408'
+
+          - task: NodeTool@0
+            displayName: 'Use Node version 11.x'
+            inputs:
+              versionSpec: '11.x'
+
+          - task: Bash@3
+            displayName: 'Restore NPM packages'
+            inputs:
+              targetType: 'inline'
+              script: 'npm ci'
+              workingDirectory: 'parrot/src/parrot'
 
           - task: DotNetCoreCLI@2
             displayName: 'Run Unit Tests'
@@ -52,14 +80,14 @@ stages:
               projects: 'parrot/tests/parrot.UnitTests/parrot.UnitTests.csproj'
               arguments: '--configuration $(BuildConfiguration) --logger:trx'
               testRunTitle: 'Unit Tests'
-            
+
           - task: DotNetCoreCLI@2
             displayName: 'Publish Application'
             inputs:
               command: 'publish'
               publishWebProjects: false
               projects: 'parrot/src/parrot/parrot.csproj'
-              arguments: '--configuration $(BuildConfiguration) --output dist'
+              arguments: '--configuration $(BuildConfiguration) --output parrot/src/parrot/out'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -73,12 +101,11 @@ stages:
               buildContext: 'parrot/src/parrot'
               tags: '$(Build.BuildNumber)'
 
-          - task: Bash@3
-            displayName: 'Container Scan'
-            inputs:
-              targetType: 'inline'
-              script: 'echo ''Container scan... passed!'''
-              
+          - template: ../pipeline-templates/trivy-scan.yml
+            parameters:
+              imageName: $(LOGIN_SERVER)/$(containerRepository):$(Build.BuildNumber)
+              failTaskOnFailedScan: true
+
           - task: Docker@2
             displayName: 'Push Docker Image'
             inputs:
@@ -86,4 +113,3 @@ stages:
               repository: '$(containerRepository)'
               command: 'push'
               tags: '$(Build.BuildNumber)'
-              
