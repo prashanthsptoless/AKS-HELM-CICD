@@ -1,0 +1,46 @@
+parameters:
+- name: trivyVersion
+  type: string
+  default: '0.18.1'
+- name: failTaskOnFailedScan 
+  type: boolean 
+  default: true
+- name: imageName
+  type: string
+
+steps:
+  - task: Bash@3
+    displayName: 'Pin Trivy'
+    env: 
+      TRIVY_VERSION: ${{ parameters.trivyVersion }}
+    inputs:
+      targetType: 'inline'
+      script: |
+        set -euo pipefail
+
+        wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb
+        sudo dpkg -i trivy_${TRIVY_VERSION}_Linux-64bit.deb
+
+  - task: Bash@3
+    displayName: 'Container Image Scan'
+    env:
+      IMAGE_NAME: ${{ parameters.imageName }}
+    inputs:
+        targetType: 'inline'
+        script: |
+          set -euo pipefail
+          
+          trivy image \
+            --ignore-unfixed \
+            --format template \
+            --template "@pipeline-templates/junit.tpl" \
+            -o junit-report.xml \
+            ${IMAGE_NAME}
+  
+  - task: PublishTestResults@2
+    displayName: 'Publish Trivy Scan Results'
+    inputs:
+        testResultsFormat: 'JUnit' 
+        testResultsFiles: 'junit-report.xml' 
+        failTaskOnFailedTests: ${{ parameters.failTaskOnFailedScan }}
+        testRunTitle: 'Trivy Image Scan'

@@ -7,4 +7,5 @@ service:
   externalPort: 80
 ingress:
   enabled: true
-  
+  tls:
+   secretName: 'ingress-tls'

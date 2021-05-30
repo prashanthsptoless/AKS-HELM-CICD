@@ -8,48 +8,23 @@ trigger:
       - parrot/azure-pipelines.helm.yaml
     exclude:
       - parrot/azure-pipelines.deploy.yml
+      - parrot/azure-pipelines.docker.yml
   branches:
     include:
-      - master
+      - main
 
 variables:
-  helmVersion: 3.0.2
-  containerRepository: parrot
-  containerRegistry: containerpipelinesdemoacr
+  - group: acr
+  - name: containerRepository
+    value: parrot
+  - name: namespace
+    value: charts
+  - name: HELM_EXPERIMENTAL_OCI
+    value: 1
+  - name: artifact
+    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
+  - name: chart_path
+    value: parrot/src/parrot/charts/parrot
 
 stages:
-  - stage: Build
-    displayName: 'Package Helm Chart'
-    jobs:
-      - job: Helm
-        displayName: 'Build and Push Helm Chart'
-        pool:
-          vmImage: 'ubuntu-latest'
-
-        steps:
-          - checkout: self
-            fetchDepth: 1
-
-          - task: HelmInstaller@1
-            displayName: 'Initialize Helm'
-            inputs:
-              helmVersionToInstall: '$(helmVersion)'
-
-          - task: HelmDeploy@0
-            displayName: 'Package Helm Chart'
-            inputs:
-              command: 'package'
-              chartPath: 'parrot/src/parrot/charts/parrot'
-              chartVersion: '$(Build.BuildNumber)'
-              save: false
-
-          - task: AzureCLI@2
-            displayName: 'Push Helm Chart'
-            inputs:
-              azureSubscription: 'AzureMSDN'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az acr helm push \
-                  --name $(containerRegistry) \
-                  $(Build.ArtifactStagingDirectory)/$(containerRepository)-$(Build.BuildNumber).tgz
+  - template: '../pipeline-templates/helm-package.yml'
