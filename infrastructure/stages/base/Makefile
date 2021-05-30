@@ -7,7 +7,6 @@ fmt:
 	terraform fmt -recursive
 
 init:
-	# terraform init --upgrade 
 	terraform init --upgrade -backend-config azurerm.backend.tfvars
 	terraform -v
 	terraform providers
