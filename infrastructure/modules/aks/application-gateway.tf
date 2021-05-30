@@ -1,5 +1,5 @@
 module "agw" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/application-gateway?ref=main"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/application-gateway?ref=application-gateway-0.0.1"
 
   environment                  = var.environment
   hostname                     = local.hostname
