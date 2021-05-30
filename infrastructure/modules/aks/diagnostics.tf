@@ -1,5 +1,5 @@
 module "diagnostics" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/diagnostics?ref=azureaiconf.6.21"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/diagnostics?ref=main"
 
   log_analytics_workspace_id = var.log_analytics_workspace.id
 

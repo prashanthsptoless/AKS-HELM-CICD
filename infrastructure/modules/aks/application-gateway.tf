@@ -1,5 +1,5 @@
 module "agw" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/application-gateway?ref=azureaiconf.6.21"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/application-gateway?ref=main"
 
   environment                  = var.environment
   hostname                     = local.hostname

@@ -1,5 +1,5 @@
 module "aks_dev" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureaiconf.6.21"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=main"
 
   cert_secret_id               = data.azurerm_key_vault_certificate.certificate["dev"].secret_id
   environment                  = "dev"
@@ -10,7 +10,7 @@ module "aks_dev" {
 }
 
 module "aks_prd" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureaiconf.6.21"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=main"
 
   cert_secret_id               = data.azurerm_key_vault_certificate.certificate["prd"].secret_id
   environment                  = "prd"
