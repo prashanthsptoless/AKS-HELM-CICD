@@ -65,4 +65,4 @@ RUN bash /tmp/library-scripts/terraform-debian.sh "${TERRAFORM_VERSION}" "${TFLI
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
-
+RUN sudo ln -s /usr/bin/gpg /usr/local/bin/gpg
