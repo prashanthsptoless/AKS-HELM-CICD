@@ -75,6 +75,7 @@ stages:
                       helm show chart ./${CHART_PATH}/$(containerRepository)
 
                 - task: HelmDeploy@0
+                  displayName: 'Deploy Helm Chart'
                   inputs:
                     connectionType: 'Azure Resource Manager'
                     azureSubscription: 'Azure'
