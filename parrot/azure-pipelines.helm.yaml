@@ -6,9 +6,6 @@ trigger:
     include:
       - parrot/src/parrot/charts
       - parrot/azure-pipelines.helm.yaml
-    exclude:
-      - parrot/azure-pipelines.deploy.yml
-      - parrot/azure-pipelines.docker.yml
   branches:
     include:
       - main
