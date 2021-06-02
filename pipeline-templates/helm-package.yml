@@ -12,9 +12,9 @@ stages:
             fetchDepth: 1
 
           - task: HelmInstaller@1
-            displayName: 'Initialize Helm'
+            displayName: 'Pin Helm Version'
             inputs:
-              helmVersionToInstall: 'latest'
+              helmVersionToInstall: '3.6.0'
 
           - task: Bash@3
             displayName: 'Check Helm Chart'
