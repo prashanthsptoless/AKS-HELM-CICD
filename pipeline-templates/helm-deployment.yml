@@ -28,9 +28,9 @@ stages:
                 - checkout: none
 
                 - task: HelmInstaller@1
-                  displayName: 'Install Helm'
+                  displayName: 'Pin Helm Version'
                   inputs:
-                    helmVersionToInstall: 'latest'
+                    helmVersionToInstall: '3.6.0'
 
                 - task: AzureCLI@2
                   displayName: 'Prepare Deployment'
