@@ -31,6 +31,12 @@
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
 		"terminal.integrated.defaultProfile.linux": "zsh",
+		"vs-kubernetes": {
+			"vs-kubernetes.namespace": "apps",
+			"vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
+			"vs-kubernetes.helm-path": "/usr/local/bin/helm",
+			"imageBuildTool": "Docker"
+		},
 		"terraform.languageServer": {
 			"enabled": true,
 			"args": []
@@ -43,6 +49,7 @@
 		"hashicorp.terraform",
 		"ms-vscode.azurecli",
 		"ms-azuretools.vscode-azureterraform",
+		"ms-kubernetes-tools.vscode-kubernetes-tools",
 		"ms-azuretools.vscode-docker",
 		"ms-azure-devops.azure-pipelines",
 		"mhutchie.git-graph"
