@@ -20,6 +20,7 @@
     "lodash.template": "^4.5.0",
     "minimatch": "^3.0.2",
     "node-notifier": "^8.0.1",
-    "postcss": "^8.2.10"
+    "postcss": "^8.2.10",
+    "glob-parent": "^5.1.2"
   }
 }
