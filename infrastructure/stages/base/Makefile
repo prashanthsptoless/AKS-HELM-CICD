@@ -18,9 +18,9 @@ validate:
 	terraform validate
 
 config:
-	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
-	@echo 'backend_resource_group_name="rg-backend-engaged-emu"' >> terraform.auto.tfvars
-	@echo 'configuration_keyvault_name="kv-engaged-emu"' >> terraform.auto.tfvars
+	@echo 'resource_group_name="rg-united-monitor"' > terraform.auto.tfvars
+	@echo 'backend_resource_group_name="rg-backend-golden-opossum"' >> terraform.auto.tfvars
+	@echo 'configuration_keyvault_name="kv-golden-opossum"' >> terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan

@@ -1,14 +1,17 @@
 default: version
 
-dev:=boss-crawdad-dev.jamesrcounts.com
-prd:=boss-crawdad-prd.jamesrcounts.com
-kv:=kv-engaged-emu
+dev:=united-monitor-dev.jamesrcounts.com
+prd:=united-monitor-prd.jamesrcounts.com
+kv:=kv-golden-opossum
 
 version: 
 	certbot --version
 
 workspace: 
-	mkdir -p ~/certbot/{config,work,log,certs}
+	mkdir -p ~/certbot/config
+	mkdir -p ~/certbot/work
+	mkdir -p ~/certbot/log
+	mkdir -p ~/certbot/certs
 
 issue: issue_dev issue_prd
 
