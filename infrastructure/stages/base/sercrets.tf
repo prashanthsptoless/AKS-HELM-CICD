@@ -9,8 +9,8 @@ data "azurerm_key_vault" "config" {
 
 data "azurerm_key_vault_certificate" "certificate" {
   for_each = {
-    dev = "boss-crawdad-dev-jamesrcounts-com"
-    prd = "boss-crawdad-prd-jamesrcounts-com"
+    dev = "dev-jamesrcounts-com"
+    prd = "prd-jamesrcounts-com"
   }
 
   name         = each.value
