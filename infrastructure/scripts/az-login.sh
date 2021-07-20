@@ -2,5 +2,5 @@
 set -euo pipefail
 
 az login
-az account set --subscription "Jim Counts (MSDN)"
+az account set --subscription "Jim Counts (Personal)"
 az account show --output table
