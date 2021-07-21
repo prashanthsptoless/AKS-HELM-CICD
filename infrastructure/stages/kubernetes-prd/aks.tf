@@ -1,5 +1,5 @@
 data "azurerm_kubernetes_cluster" "aks" {
-  name                = "aks-${local.instance_id}-dev"
+  name                = "aks-${local.instance_id}-prd"
   resource_group_name = data.azurerm_resource_group.env.name
 }
 
