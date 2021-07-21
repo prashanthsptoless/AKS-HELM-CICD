@@ -7,8 +7,8 @@ trigger:
       - phippy
     exclude:
       - 'phippy/charts'
-      - 'phippy/azure-pipelines.deploy.yaml'
-      - 'phippy/azure-pipelines.helm.yaml'
+      - 'phippy/azure-pipelines.deploy.yml'
+      - 'phippy/azure-pipelines.helm.yml'
   branches:
     include:
       - main

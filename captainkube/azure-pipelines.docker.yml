@@ -7,8 +7,8 @@ trigger:
       - captainkube
     exclude:
       - 'captainkube/charts'
-      - 'captainkube/azure-pipelines.deploy.yaml'
-      - 'captainkube/azure-pipelines.helm.yaml'
+      - 'captainkube/azure-pipelines.deploy.yml'
+      - 'captainkube/azure-pipelines.helm.yml'
   branches:
     include:
       - main

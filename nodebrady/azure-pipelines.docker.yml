@@ -7,8 +7,8 @@ trigger:
       - nodebrady
     exclude:
       - 'nodebrady/charts'
-      - 'nodebrady/azure-pipelines.deploy.yaml'
-      - 'nodebrady/azure-pipelines.helm.yaml'
+      - 'nodebrady/azure-pipelines.deploy.yml'
+      - 'nodebrady/azure-pipelines.helm.yml'
   branches:
     include:
       - main
