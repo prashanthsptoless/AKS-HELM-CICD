@@ -3,8 +3,6 @@ parameters:
   type: string
 - name: projectFolder 
   type: string
-- name: kubernetesCluster
-  type: string
 
 stages:
   - stage: 

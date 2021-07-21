@@ -21,8 +21,6 @@ variables:
   - template: '../pipeline-templates/infrastructure-variables.yml'
   - name: projectFolder
     value: infrastructure/stages/kubernetes-dev
-  - name: kubernetesCluster
-    value: aks-boss-crawdad-dev
 
 stages:
   - template: '../pipeline-templates/kubernetes-plan.yml'
@@ -34,4 +32,3 @@ stages:
     parameters:
       environment: kubernetes-dev
       projectFolder: $(projectFolder)
-      kubernetesCluster: $(kubernetesCluster)
