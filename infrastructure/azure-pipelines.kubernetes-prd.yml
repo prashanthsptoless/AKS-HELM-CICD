@@ -21,18 +21,14 @@ variables:
   - template: '../pipeline-templates/infrastructure-variables.yml'
   - name: projectFolder
     value: infrastructure/stages/kubernetes-prd
-  - name: kubernetesCluster
-    value: aks-boss-crawdad-prd
 
 stages:
   - template: '../pipeline-templates/kubernetes-plan.yml'
     parameters:
       projectFolder: $(projectFolder)
       stateBlobName: kubernetes-prd.terraform.tfstate
-      kubernetesCluster: $(kubernetesCluster)
 
   - template: '../pipeline-templates/kubernetes-deploy.yml'
     parameters:
       environment: kubernetes-prd
       projectFolder: $(projectFolder)
-      kubernetesCluster: $(kubernetesCluster)
