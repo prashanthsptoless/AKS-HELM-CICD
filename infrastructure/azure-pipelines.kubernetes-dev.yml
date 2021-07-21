@@ -29,7 +29,6 @@ stages:
     parameters:
       projectFolder: $(projectFolder)
       stateBlobName: kubernetes-dev.terraform.tfstate
-      kubernetesCluster: $(kubernetesCluster)
 
   - template: '../pipeline-templates/kubernetes-deploy.yml'
     parameters:
