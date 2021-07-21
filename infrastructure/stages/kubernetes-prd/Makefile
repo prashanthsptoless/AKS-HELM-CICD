@@ -1,5 +1,18 @@
 default: all
 
+backend_instance_id := modest-horse
+instance_id         := active-tetra
+state_prefix        := kubernetes-prd
+
+backend_config:
+	az keyvault secret download \
+		--name azurerm-backend-tfvars \
+		--vault-name kv-$(backend_instance_id) \
+		--file azurerm.backend.tfvars
+	sed -i \
+		's/container-pipelines.tfstate/$(state_prefix).container-pipelines.tfstate/' \
+		azurerm.backend.tfvars
+
 fmt:
 	terraform fmt -recursive
 
@@ -15,11 +28,7 @@ validate:
 	terraform validate
 
 config:
-	@echo 'resource_group_name="rg-boss-crawdad"' > terraform.auto.tfvars
-	@echo 'aks_cluster_name="aks-boss-crawdad-prd"' >> terraform.auto.tfvars
-	@echo 'aks_vnet_name="vnet-aks-boss-crawdad-prd"' >> terraform.auto.tfvars
-	@echo 'backend_resource_group_name="rg-backend-engaged-emu"' >> terraform.auto.tfvars
-	@echo 'configuration_keyvault_name="kv-engaged-emu"' >> terraform.auto.tfvars
+	@echo 'resource_group_name="rg-$(instance_id)"' > terraform.auto.tfvars
 
 plan: config fmt validate
 	terraform plan -out plan.tfplan
