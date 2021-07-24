@@ -5,12 +5,13 @@ instance_id         := active-tetra
 state_prefix        := kubernetes-prd
 
 backend_config:
+	rm azurerm.backend.tfvars
 	az keyvault secret download \
 		--name azurerm-backend-tfvars \
 		--vault-name kv-$(backend_instance_id) \
 		--file azurerm.backend.tfvars
 	sed -i \
-		's/container-pipelines.tfstate/$(state_prefix).container-pipelines.tfstate/' \
+		's/container-pipelines.tfstate/$(state_prefix).terraform.tfstate/' \
 		azurerm.backend.tfvars
 
 fmt:
