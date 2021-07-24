@@ -43,12 +43,12 @@ variables:
 stages:
   - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
-      baseDomain: $(instance_id)-dev.$(aksHost)
+      baseDomain: dev.$(aksHost)
       environment: dev.apps
       kubernetesCluster: aks-$(instance_id)-dev
 
   - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
-      baseDomain: $(instance_id)-prd.$(aksHost)
+      baseDomain: prd.$(aksHost)
       environment: prd.apps
       kubernetesCluster: aks-$(instance_id)-prd
