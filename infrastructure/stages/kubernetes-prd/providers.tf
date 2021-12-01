@@ -1,4 +1,13 @@
 provider "azurerm" {
+  subscription_id = var.env_subscription_id
+
+  features {}
+}
+
+provider "azurerm" {
+  alias           = "ops"
+  subscription_id = var.ops_subscription_id
+
   features {}
 }
 

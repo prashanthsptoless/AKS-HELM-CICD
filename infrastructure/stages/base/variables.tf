@@ -1,14 +1,19 @@
-variable "backend_resource_group_name" {
-  description = "(Required) The name of the resource group containing backend resources for this project."
+variable "ops_instance_id" {
+  description = "(Required) The instance ID for this project's ops resources."
   type        = string
 }
 
-variable "configuration_keyvault_name" {
-  description = "(Required) The name of the key vault containing configuration data."
+variable "ops_subscription_id" {
+  description = "(Required) The subscription ID containing this project's ops resources"
   type        = string
 }
 
-variable "resource_group_name" {
-  description = "(Required) The name of the resource group for this project."
+variable "env_instance_id" {
+  description = "(Required) The instance ID for this project's resources."
+  type        = string
+}
+
+variable "env_subscription_id" {
+  description = "(Required) The Azure subscription ID for the solution environment."
   type        = string
 }

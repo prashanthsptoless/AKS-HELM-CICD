@@ -3,17 +3,10 @@ variable "aks_subnet_cidr" {
   type        = string
 }
 
-variable "backend_resource_group_name" {
-  description = "(Required) The name of the resource group containing backend resources for this project."
-  type        = string
-}
-
-variable "certificate_name" {
-  description = "(Required) The name of the certificate stored in the backend configuration."
-  type        = string
-}
-
-variable "configuration_keyvault_name" {
-  description = "(Required) The name of the key vault containing configuration data."
-  type        = string
+variable "tls" {
+  description = "(Required) TLS cert and key data."
+  type = object({
+    cert = string
+    key  = string
+  })
 }

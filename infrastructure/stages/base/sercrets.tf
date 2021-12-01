@@ -1,13 +1,14 @@
-data "azurerm_resource_group" "config" {
-  name = var.backend_resource_group_name
-}
 
 data "azurerm_key_vault" "config" {
-  name                = var.configuration_keyvault_name
-  resource_group_name = var.backend_resource_group_name
+  provider = azurerm.ops
+
+  name                = "kv-${var.ops_instance_id}"
+  resource_group_name = data.azurerm_resource_group.ops.name
 }
 
 data "azurerm_key_vault_certificate" "certificate" {
+  provider = azurerm.ops
+
   for_each = {
     dev = "dev-jamesrcounts-com"
     prd = "prd-jamesrcounts-com"

@@ -1,14 +1,17 @@
 default: all
 
-backend_instance_id := modest-horse
-instance_id         := active-tetra
-state_prefix        := kubernetes-dev
+CONFIG := terraform.auto.tfvars
 
-backend_config:
-	rm azurerm.backend.tfvars
+ops_instance_id     := definite-marlin
+env_instance_id     := fun-wolf
+env_subscription_id := 77fc5cff-a120-47a1-83bc-5c64163f872d
+state_prefix        := kubernetes-dev
+ops_subscription_id := 17fe8838-4661-4395-bdab-4136639668d9
+
+azurerm.backend.tfvars:
 	az keyvault secret download \
 		--name azurerm-backend-tfvars \
-		--vault-name kv-$(backend_instance_id) \
+		--vault-name kv-$(ops_instance_id) \
 		--file azurerm.backend.tfvars
 	sed -i \
 		's/container-pipelines.tfstate/$(state_prefix).terraform.tfstate/' \
@@ -17,21 +20,23 @@ backend_config:
 fmt:
 	terraform fmt -recursive
 
-init:
+init: azurerm.backend.tfvars
 	terraform init --upgrade -backend-config azurerm.backend.tfvars
 	terraform -v
 	terraform providers
 	
-clean: config
+clean: $(CONFIG)
 	terraform destroy -auto-approve
 	
 validate:
 	terraform validate
 
-config:
-	@echo 'resource_group_name="rg-$(instance_id)"' > terraform.auto.tfvars
+$(CONFIG):
+	@echo 'resource_group_name="rg-$(env_instance_id)"'   > $(CONFIG)
+	@echo 'env_subscription_id="$(env_subscription_id)"' >> $(CONFIG)
+	@echo 'ops_subscription_id="$(ops_subscription_id)"' >> $(CONFIG)
 
-plan: config fmt validate
+plan: $(CONFIG) fmt validate
 	terraform plan -out plan.tfplan
 	
 apply:

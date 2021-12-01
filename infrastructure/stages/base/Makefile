@@ -1,9 +1,13 @@
 default: all
 
-backend_instance_id := modest-horse
-instance_id         := active-tetra
+CONFIG := terraform.auto.tfvars
 
-backend_config:
+env_instance_id     := fun-wolf
+env_subscription_id := 77fc5cff-a120-47a1-83bc-5c64163f872d
+ops_instance_id     := definite-marlin
+ops_subscription_id := 17fe8838-4661-4395-bdab-4136639668d9
+
+azurerm.backend.tfvars: 
 	az keyvault secret download \
 		--name azurerm-backend-tfvars \
 		--vault-name kv-$(backend_instance_id) \
@@ -11,30 +15,33 @@ backend_config:
 
 aad_script:
 	az keyvault secret download \
-		--name add-azureadroles-ps1 \
-		--vault-name kv-$(backend_instance_id) \
-		--file Add-AzureAdRoles.ps1
+		--name add-azuread-roles-sh \
+		--vault-name kv-$(ops_instance_id) \
+		--file add-azuread-roles.sh
 
 fmt:
 	terraform fmt -recursive
 
-init:
+init: azurerm.backend.tfvars
 	terraform init --upgrade -backend-config azurerm.backend.tfvars
 	terraform -v
 	terraform providers
 	
-clean: config
+clean: $(CONFIG)
 	terraform destroy -auto-approve
 	
 validate:
 	terraform validate
 
-config:
-	@echo 'resource_group_name="rg-$(instance_id)"' > terraform.auto.tfvars
-	@echo 'backend_resource_group_name="rg-backend-$(backend_instance_id)"' >> terraform.auto.tfvars
-	@echo 'configuration_keyvault_name="kv-$(backend_instance_id)"' >> terraform.auto.tfvars
+$(CONFIG):
+	# TODO: this could also be loaded from keyvault
+	@echo 'env_instance_id="$(env_instance_id)"'          > $(CONFIG)
+	@echo 'env_subscription_id="$(env_subscription_id)"' >> $(CONFIG)
+	@echo 'ops_instance_id="$(ops_instance_id)"'         >> $(CONFIG)
+	@echo 'ops_subscription_id="$(ops_subscription_id)"' >> $(CONFIG)
+	terraform fmt
 
-plan: config fmt validate
+plan: $(CONFIG) fmt validate
 	terraform plan -out plan.tfplan
 	
 apply:

@@ -331,3 +331,4 @@ ASALocalRun/
 .DS_Store
 parrot/src/parrot/out/
 parrot/junit-report.xml
+infrastructure/stages/base/add-azuread-roles.sh
