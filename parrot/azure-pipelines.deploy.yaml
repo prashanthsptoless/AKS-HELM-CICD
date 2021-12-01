@@ -45,10 +45,10 @@ stages:
     parameters:
       baseDomain: dev.$(aksHost)
       environment: dev.apps
-      kubernetesCluster: aks-$(instance_id)-dev
+      kubernetesCluster: aks-$(AZURE_ENV_INSTANCE_ID)-dev
 
   - template: '../pipeline-templates/helm-deployment.yml'
     parameters:
       baseDomain: prd.$(aksHost)
       environment: prd.apps
-      kubernetesCluster: aks-$(instance_id)-prd
+      kubernetesCluster: aks-$(AZURE_ENV_INSTANCE_ID)-prd
