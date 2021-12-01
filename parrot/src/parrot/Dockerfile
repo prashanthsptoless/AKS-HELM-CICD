@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:3.1.21-alpine3.14
+FROM mcr.microsoft.com/dotnet/aspnet:3.1-alpine
 
 RUN apk update && apk upgrade --no-cache
 
