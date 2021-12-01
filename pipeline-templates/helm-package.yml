@@ -39,7 +39,7 @@ stages:
             displayName: 'Push Helm Chart'
             inputs:
               addSpnToEnvironment: true
-              azureSubscription: 'Azure'
+              azureSubscription: 'AzureOps'
               scriptLocation: 'inlineScript'
               scriptType: 'bash'
               inlineScript: |
