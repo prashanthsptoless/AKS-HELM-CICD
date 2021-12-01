@@ -13,7 +13,10 @@ test:
 publish:
 	dotnet publish src/parrot/parrot.csproj --configuration $(BuildConfiguration) --output ./src/parrot/out
 
-build:
+pull:
+	docker pull mcr.microsoft.com/dotnet/aspnet:3.1.21-alpine3.14
+
+build: pull
 	docker build -f ./src/parrot/Dockerfile -t parrot:latest ./src/parrot
 
 scan:
