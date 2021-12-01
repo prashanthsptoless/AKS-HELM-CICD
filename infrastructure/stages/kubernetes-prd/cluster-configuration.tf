@@ -1,5 +1,5 @@
 module "aks" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/kubernetes?ref=azureai.2021.12"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/kubernetes?ref=main"
 
   aks_subnet_cidr = data.azurerm_subnet.aks.address_prefixes.0
   tls = {

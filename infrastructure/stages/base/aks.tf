@@ -1,5 +1,5 @@
 module "aks" {
-  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=azureai.2021.12"
+  source = "github.com/jamesrcounts/phippyandfriends.git//infrastructure/modules/aks?ref=main"
 
   for_each = toset(["dev", "prd"])
 
