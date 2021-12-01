@@ -40,7 +40,7 @@ stages:
                     CHART_PATH: $(local_chart_path)
                   inputs:
                     addSpnToEnvironment: true
-                    azureSubscription: 'Azure'
+                    azureSubscription: 'AzureOps'
                     failOnStandardError: true
                     scriptLocation: 'inlineScript'
                     scriptType: 'bash'
@@ -80,7 +80,7 @@ stages:
                   displayName: 'Deploy Helm Chart'
                   inputs:
                     connectionType: 'Azure Resource Manager'
-                    azureSubscription: 'Azure'
+                    azureSubscription: 'AzureEnv'
                     azureResourceGroup: rg-$(AZURE_ENV_INSTANCE_ID)
                     kubernetesCluster: '${{ parameters.kubernetesCluster }}'
                     useClusterAdmin: true
