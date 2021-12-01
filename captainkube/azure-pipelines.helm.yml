@@ -39,7 +39,7 @@ stages:
           - task: HelmInstaller@1
             displayName: 'Initialize Helm'
             inputs:
-              helmVersionToInstall: 'latest'
+              helmVersionToInstall: '3.6.0'
 
           - task: Bash@3
             displayName: 'Check Helm Chart'
@@ -64,7 +64,7 @@ stages:
             displayName: 'Push Helm Chart'
             inputs:
               addSpnToEnvironment: true
-              azureSubscription: 'Azure'
+              azureSubscription: 'AzureOps'
               scriptLocation: 'inlineScript'
               scriptType: 'bash'
               inlineScript: |
