@@ -33,10 +33,6 @@ variables:
     value: 1
   - name: namespace
     value: charts
-  - name: artifact
-    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(chartTag)"
-  - name: local_chart_path
-    value: "$(containerRepository)-$(chartTag)"
 
 stages:
   - template: '../pipeline-templates/helm-deployment.yml'

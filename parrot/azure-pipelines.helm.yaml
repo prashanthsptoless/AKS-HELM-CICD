@@ -18,8 +18,6 @@ variables:
     value: charts
   - name: HELM_EXPERIMENTAL_OCI
     value: 1
-  - name: artifact
-    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
   - name: chart_path
     value: parrot/src/parrot/charts/parrot
 

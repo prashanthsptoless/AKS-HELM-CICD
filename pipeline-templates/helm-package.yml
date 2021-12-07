@@ -14,7 +14,7 @@ stages:
           - task: HelmInstaller@1
             displayName: 'Pin Helm Version'
             inputs:
-              helmVersionToInstall: '3.6.0'
+              helmVersionToInstall: '3.7.1'
 
           - task: Bash@3
             displayName: 'Check Helm Chart'
@@ -26,13 +26,13 @@ stages:
                 helm lint $(chart_path) --strict
 
           - task: Bash@3
-            displayName: 'Save Helm Chart'
+            displayName: 'Package Helm Chart'
             inputs:
               targetType: 'inline'
               script: |
                 set -euo pipefail
 
-                helm chart save $(chart_path) $(artifact)
+                helm package $(chart_path) --version $(Build.BuildNumber)
 
           - task: AzureCLI@2
             condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
@@ -50,4 +50,4 @@ stages:
                     --username $servicePrincipalId \
                     --password-stdin
 
-                helm chart push $(artifact)
+                helm push $(System.DefaultWorkingDirectory)/$(containerRepository)-$(Build.BuildNumber).tgz oci://$(LOGIN_SERVER)/$(namespace)

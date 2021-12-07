@@ -20,8 +20,6 @@ variables:
     value: charts
   - name: HELM_EXPERIMENTAL_OCI
     value: 1
-  - name: artifact
-    value: "$(LOGIN_SERVER)/$(namespace)/$(containerRepository):$(Build.BuildNumber)"
 
 stages:
   - template: '../pipeline-templates/helm-package.yml'

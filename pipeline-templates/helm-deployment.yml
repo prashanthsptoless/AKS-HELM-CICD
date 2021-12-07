@@ -30,7 +30,7 @@ stages:
                 - task: HelmInstaller@1
                   displayName: 'Pin Helm Version'
                   inputs:
-                    helmVersionToInstall: '3.6.0'
+                    helmVersionToInstall: '3.7.1'
 
                 - task: AzureCLI@2
                   displayName: 'Prepare Deployment'
@@ -67,15 +67,6 @@ stages:
                           --username $servicePrincipalId \
                           --password-stdin
 
-                      echo "Retrieve Artifact"
-                      helm chart pull $(artifact)
-
-                      echo "Unpack Artifact"
-                      helm chart export "$(artifact)" --destination ./${CHART_PATH}
-
-                      echo "Sanity Check"
-                      helm show chart ./${CHART_PATH}/$(containerRepository)
-
                 - task: HelmDeploy@0
                   displayName: 'Deploy Helm Chart'
                   inputs:
@@ -86,7 +77,8 @@ stages:
                     useClusterAdmin: true
                     namespace: 'apps'
                     command: 'upgrade'
-                    chartType: 'FilePath'
-                    chartPath: './$(local_chart_path)/$(containerRepository)'
+                    chartType: 'Name'
+                    chartName: 'oci://$(LOGIN_SERVER)/$(namespace)/$(containerRepository)'
                     releaseName: '$(containerRepository)'
                     overrideValues: $(overrideValues)
+                    arguments: '--version $(chartTag)'
