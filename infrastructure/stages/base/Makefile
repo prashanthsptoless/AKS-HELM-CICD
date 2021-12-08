@@ -10,7 +10,7 @@ ops_subscription_id := 17fe8838-4661-4395-bdab-4136639668d9
 azurerm.backend.tfvars: 
 	az keyvault secret download \
 		--name azurerm-backend-tfvars \
-		--vault-name kv-$(backend_instance_id) \
+		--vault-name kv-$(ops_instance_id) \
 		--file azurerm.backend.tfvars
 
 aad_script:
@@ -27,7 +27,7 @@ init: azurerm.backend.tfvars
 	terraform -v
 	terraform providers
 	
-clean: $(CONFIG)
+clean: $(CONFIG) init
 	terraform destroy -auto-approve
 	
 validate:
