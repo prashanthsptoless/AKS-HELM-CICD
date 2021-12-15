@@ -103,7 +103,7 @@ stages:
 
           - template: ../pipeline-templates/trivy-scan.yml
             parameters:
-              imageName: $(LOGIN_SERVER)/$(containerRepository):$(Build.BuildNumber)
+              imageName: $(containerRepository):$(Build.BuildId)
               failTaskOnFailedScan: true
 
           - task: Docker@2
