@@ -21,7 +21,6 @@
     "minimatch": "^3.0.2",
     "node-notifier": "^8.0.1",
     "postcss": "^8.2.10",
-    "glob-parent": "^5.1.2",
-    "ansi-regex": "^5.0.1"
+    "glob-parent": "^5.1.2"
   }
 }
