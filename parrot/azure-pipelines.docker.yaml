@@ -94,12 +94,12 @@ stages:
           - task: Docker@2
             displayName: 'Build Docker Image'
             inputs:
-              containerRegistry: 'ACR'
+              # containerRegistry: 'ACR'
               repository: '$(containerRepository)'
               command: 'build'
               Dockerfile: 'parrot/src/parrot/Dockerfile'
               buildContext: 'parrot/src/parrot'
-              tags: '$(Build.BuildNumber)'
+              # tags: '$(Build.BuildNumber)'
 
           - template: ../pipeline-templates/trivy-scan.yml
             parameters:
